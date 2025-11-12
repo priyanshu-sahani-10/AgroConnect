@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import connectDB from './utils/dbConnect.js';
+import cropRouter from './routes/crop.route.js';
 
 
 dotenv.config();
@@ -18,5 +19,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use(cookieParser());
+
+app.use("/api/v1/crop",cropRouter)
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

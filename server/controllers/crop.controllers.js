@@ -1,4 +1,4 @@
-import Crop from "../models/crop.model";
+import Crop from "../models/crop.model.js";
 
 const uploadCrop = async (req, res) => {
   try {
@@ -47,3 +47,5 @@ const uploadCrop = async (req, res) => {
     });
   }
 };
+
+export default uploadCrop;
