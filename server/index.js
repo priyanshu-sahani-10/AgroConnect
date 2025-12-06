@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import connectDB from './utils/dbConnect.js';
 import cropRouter from './routes/crop.route.js';
+import { ClerkExpressWithAuth } from "@clerk/express";
 
 
 dotenv.config();
@@ -19,6 +20,9 @@ app.use(cors({
 
 app.use(express.json());
 app.use(cookieParser());
+
+// ⬇️ This will read the Authorization token and set req.auth if valid
+app.use(ClerkExpressWithAuth());
 
 app.use("/api/v1/crop",cropRouter)
 
