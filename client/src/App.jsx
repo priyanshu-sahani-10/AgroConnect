@@ -1,5 +1,6 @@
 import { SignedIn, SignedOut, SignInButton, UserButton,SignIn } from '@clerk/clerk-react';
-
+import Account from './components/account';
+import Home from './components/Home';
 export default function App() {
   return (
     <header>
@@ -7,6 +8,8 @@ export default function App() {
         <SignIn />
       </SignedOut>
       <SignedIn>
+      <Account/>
+    <Home/>
         <UserButton />
       </SignedIn>
     </header>

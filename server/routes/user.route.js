@@ -4,6 +4,6 @@ import registerUser from "../controllers/user.controller.js";
 
 const userRouter = Router();
 
-userRouter.route("/sync").post(requireAuth(), registerUser);
+userRouter.route("/register").post(requireAuth(), registerUser);
 
 export default userRouter;

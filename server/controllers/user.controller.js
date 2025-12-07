@@ -3,7 +3,7 @@ import User from "../models/user.model.js";
 const registerUser = async (req, res) => {
   try {
     const { userId } = req.auth;
-    const { name, email, role, location } = req.body || {};
+    const { name, email, role, location,mobileNo } = req.body || {};
     let user = User.findOne({ clerkId: userId });
     if (!user) {
       //create new user
@@ -13,13 +13,21 @@ const registerUser = async (req, res) => {
         email,
         location,
         role: role || "buyer",
+        mobileNo,
       });
     } else {
       // Optional: keep user info in sync
-      if (name) user.name = name;
-      if (email) user.email = email;
-      if (role) user.role = role;
-      if (location) user.location = location;
+      if(!name || !email || !role || !location || !mobileNo){
+        res.status(201).json({
+          success:false,
+          message:"All field are required",
+        })
+      }
+      user.name = name;
+      user.email = email;
+      user.role = role;
+      user.location = location;
+      user.mobileNo=mobileNo;  
 
       await user.save();
     }

@@ -23,6 +23,10 @@ const userSchema = new mongoose.Schema(
       enum: ["farmer", "buyer", "admin"],
       default: "buyer", // you can change default
     },
+    mobileNo:{
+      type:Number,
+      required:true,
+    },
     location: {
       type: String,
     },
