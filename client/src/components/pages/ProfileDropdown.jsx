@@ -9,8 +9,11 @@ import {
   Mail,
   DollarSign
 } from "lucide-react";
+import { SignedIn, useClerk } from "@clerk/clerk-react";
 
-const UserProfileDropdown = () => {
+const UserProfileDropdown = ({ wrapperClassName = "" }) => {
+  const { signOut } = useClerk();
+  
   // Replace with your Redux selector
   const user = {
     name: "Priyanshu Sahani",
@@ -25,13 +28,19 @@ const UserProfileDropdown = () => {
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const logoutHandler = () => {
-    console.log("Logout");
-    setDropdownOpen(false);
+  const logoutHandler = async () => {
+    try {
+      await signOut();
+      setDropdownOpen(false);
+      // Optional: redirect to home or login page
+      // window.location.href = "/";
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
 
   return (
-    <div className="flex items-center gap-3">
+    <div className={`flex items-center gap-3 ${wrapperClassName}`}>
       <span className="text-sm text-gray-600 hidden lg:block">
         Welcome, <span className="font-semibold text-gray-900">{user?.name}</span>
       </span>
@@ -168,7 +177,7 @@ const UserProfileDropdown = () => {
               </div>
 
               {/* Logout */}
-              <div className="border-t border-gray-200 py-2">
+                <div className="border-t border-gray-200 py-2">
                 <button
                   onClick={logoutHandler}
                   className="w-full text-left px-4 py-3 hover:bg-red-50 flex items-center gap-3 text-sm text-red-600 font-medium transition-colors"
