@@ -6,6 +6,7 @@ import { ClerkProvider } from "@clerk/clerk-react";
 import { Provider } from "react-redux";
 import appStore from "./app/store.js";
 import { BrowserRouter } from "react-router-dom";
+import ClerkSync from "./components/pages/ClerkSync";
 
 // Import your Publishable Key
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
@@ -17,11 +18,12 @@ if (!PUBLISHABLE_KEY) {
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
-    <Provider store={appStore}>
-      <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
-        <App />
-      </ClerkProvider>
-    </Provider>
+      <Provider store={appStore}>
+        <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+          <ClerkSync />
+          <App />
+        </ClerkProvider>
+      </Provider>
     </BrowserRouter>
   </StrictMode>
 );

@@ -9,7 +9,6 @@ const userSchema = new mongoose.Schema(
     },
     name: {
       type: String,
-      required: true,
       trim: true,
     },
 
@@ -25,7 +24,6 @@ const userSchema = new mongoose.Schema(
     },
     mobileNo:{
       type:Number,
-      required:true,
     },
     location: {
       type: String,
