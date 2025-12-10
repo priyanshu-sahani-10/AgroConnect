@@ -3,7 +3,7 @@ import React from "react";
 import { Sprout, Users, ShoppingCart, TrendingUp, ArrowRight, Package, MessageCircle, Shield } from "lucide-react";
 
 const Home = () => {
-  const isAuthenticated = false; // Replace with Redux selector
+  const isAuthenticated = true; // Replace with Redux selector
 
   const handleGetStarted = () => {
     if (isAuthenticated) {
@@ -51,9 +51,9 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
+    <div className="min-h-screen bg-linear-to-br from-green-50 via-white to-emerald-50">
       {/* Hero Section */}
-      <div className="max-w-7xl mx-auto px-6 py-20">
+      <div className="w-full px-6 lg:px-12 xl:px-20 py-20">
         <div className="flex flex-col lg:flex-row items-center gap-16">
           {/* Left Content */}
           <div className="flex-1 space-y-8 text-center lg:text-left">
@@ -67,7 +67,7 @@ const Home = () => {
             <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
               <span className="text-gray-900">Farm Fresh,</span>
               <br />
-              <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
                 Delivered Direct
               </span>
             </h1>
@@ -87,7 +87,7 @@ const Home = () => {
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Button 
                 size="lg" 
-                className="group text-lg px-8 py-6 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                className="group text-lg px-8 py-6 bg-linear-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
                 onClick={handleGetStarted}
               >
                 Get Started
@@ -122,7 +122,7 @@ const Home = () => {
           <div className="flex-1 relative">
             <div className="grid grid-cols-2 gap-6">
               <div className="space-y-6">
-                <div className="bg-gradient-to-br from-green-500 to-emerald-500 rounded-3xl p-8 text-white shadow-xl">
+                <div className="bg-linear-to-br from-green-500 to-emerald-500 rounded-3xl p-8 text-white shadow-xl">
                   <Sprout className="w-12 h-12 mb-4" />
                   <h3 className="text-2xl font-bold mb-2">For Farmers</h3>
                   <p className="text-green-100">
@@ -130,8 +130,8 @@ const Home = () => {
                   </p>
                 </div>
               </div>
-              <div className="space-y-6 pt-12">
-                <div className="bg-gradient-to-br from-emerald-500 to-green-500 rounded-3xl p-8 text-white shadow-xl">
+              <div className="space-y-6 ">
+                <div className="bg-linear-to-br from-emerald-500 to-green-500 rounded-3xl p-8 text-white shadow-xl">
                   <ShoppingCart className="w-12 h-12 mb-4" />
                   <h3 className="text-2xl font-bold mb-2">For Buyers</h3>
                   <p className="text-green-100">
@@ -145,7 +145,7 @@ const Home = () => {
       </div>
 
       {/* Features Section */}
-      <div className="max-w-7xl mx-auto px-6 py-20">
+      <div className="w-full px-6 lg:px-12 xl:px-20 py-20">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
             Why Choose AgroConnect?
@@ -163,7 +163,7 @@ const Home = () => {
                 key={index}
                 className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100"
               >
-                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <div className="w-16 h-16 bg-linear-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                   <Icon className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3">
@@ -179,7 +179,7 @@ const Home = () => {
       </div>
 
       {/* How It Works Section */}
-      <div className="max-w-7xl mx-auto px-6 py-20">
+      <div className="w-full px-6 lg:px-12 xl:px-20 py-20">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
             How It Works
@@ -191,30 +191,30 @@ const Home = () => {
 
         <div className="grid md:grid-cols-3 gap-8">
           <div className="text-center">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-3xl font-bold text-green-600">1</span>
+            <div className="w-40 h-40 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="text-3xl font-bold text-green-600">Step 1</span>
             </div>
-            <h3 className="text-xl font-bold mb-3">Sign Up</h3>
+            <h3 className="text-xl font-bold mb-3 text-black">Sign Up</h3>
             <p className="text-gray-600">
               Create your account as a farmer or buyer in minutes
             </p>
           </div>
 
           <div className="text-center">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-3xl font-bold text-green-600">2</span>
+            <div className="w-40 h-40 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="text-3xl font-bold text-green-600">Step 2</span>
             </div>
-            <h3 className="text-xl font-bold mb-3">Connect</h3>
+            <h3 className="text-xl font-bold mb-3 text-black">Connect</h3>
             <p className="text-gray-600">
               Browse products, chat with farmers, and negotiate deals
             </p>
           </div>
 
           <div className="text-center">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-3xl font-bold text-green-600">3</span>
+            <div className="w-40 h-40 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="text-3xl font-bold text-green-600">Step 3</span>
             </div>
-            <h3 className="text-xl font-bold mb-3">Transact</h3>
+            <h3 className="text-xl font-bold mb-3 text-black">Transact</h3>
             <p className="text-gray-600">
               Complete secure payments and track your orders in real-time
             </p>
@@ -223,8 +223,8 @@ const Home = () => {
       </div>
 
       {/* CTA Section */}
-      <div className="max-w-7xl mx-auto px-6 py-20">
-        <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-3xl p-12 text-center text-white shadow-2xl">
+      <div className="w-full px-6 lg:px-12 xl:px-20 py-20">
+        <div className="bg-linear-to-r from-green-600 to-emerald-600 rounded-3xl p-12 text-center text-white shadow-2xl">
           <h2 className="text-4xl font-bold mb-4">
             Ready to Start Your Journey?
           </h2>
