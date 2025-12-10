@@ -2,9 +2,12 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X, Home, ShoppingCart, Package, User, LogOut, ChevronDown, Sprout, MessageCircle } from "lucide-react";
 import UserProfileDropdown from "./ProfileDropDown";
+import { useSelector } from "react-redux";
 
 export default function Navbar() {
-  const user = null;
+  const user = useSelector((state)=>state.auth.user);
+  console.log("User in Navbar : ",user);
+  
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -40,7 +43,7 @@ export default function Navbar() {
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-6">
-              {user && (
+              {user && user.name && (
                 <>
                   <Link to="/">
                     <button className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100">
@@ -75,6 +78,10 @@ export default function Navbar() {
                       <MessageCircle className="w-4 h-4" /> Chat
                     </button>
                   </Link>
+
+                  <button className="px-6 py-2 bg-green-600 text-white rounded-lg">
+                    <UserProfileDropdown />
+                  </button>
                 </>
               )}
             </div>
@@ -93,17 +100,13 @@ export default function Navbar() {
                     </button>
                   </Link>
 
-                  <Link to="/create-account">
+                  
+                </div>
+              ) : (!user.name && <Link to="/create-account">
                     <button className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
                       Create Account
                     </button>
-                  </Link>
-
-                  <button className="px-6 py-2 bg-green-600 text-white rounded-lg">
-                    <UserProfileDropdown />
-                  </button>
-                </div>
-              ) : null}
+                  </Link>)}
 
               {/* Mobile Menu Button */}
               <button

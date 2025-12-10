@@ -1,21 +1,24 @@
-import React, { useState } from "react";
-import { User, MapPin, Phone, Sprout } from "lucide-react";
+import React, { useState, useRef } from "react";
+import { User, MapPin, Phone, Sprout, Camera, X } from "lucide-react";
 import { useRegisterUserMutation } from "@/features/api/authApi";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+
 const Account = () => {
-
-
   const authUser = useSelector((state) => state.auth.user);
   const userEmail = authUser?.email;
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
     name: "",
     role: "buyer",
     location: "",
     mobileNo: "",
+    photo: null,
   });
+
+  const [photoPreview, setPhotoPreview] = useState(null);
 
   const [registerUser, { isLoading, isError, error, isSuccess }] =
     useRegisterUserMutation();
@@ -23,13 +26,19 @@ const Account = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const payload = {
-      ...formData,
-      email: userEmail, // 👈 correct
-    };
+    const formDataToSend = new FormData();
+    formDataToSend.append("name", formData.name);
+    formDataToSend.append("role", formData.role);
+    formDataToSend.append("location", formData.location);
+    formDataToSend.append("mobileNo", formData.mobileNo);
+    formDataToSend.append("email", userEmail);
+    
+    if (formData.photo) {
+      formDataToSend.append("photo", formData.photo);
+    }
 
     try {
-      const res = await registerUser(payload).unwrap();
+      const res = await registerUser(formDataToSend).unwrap();
       console.log("Register response:", res);
       alert("Account created successfully.");
       navigate("/");
@@ -45,6 +54,37 @@ const Account = () => {
     }));
   };
 
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Photo size should be less than 5MB");
+        return;
+      }
+      
+      setFormData((prev) => ({
+        ...prev,
+        photo: file,
+      }));
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removePhoto = () => {
+    setFormData((prev) => ({
+      ...prev,
+      photo: null,
+    }));
+    setPhotoPreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   if (isSuccess) {
     return (
@@ -88,6 +128,55 @@ const Account = () => {
         </div>
 
         <div className="space-y-5">
+          {/* Photo Upload */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Profile Photo
+            </label>
+            <div className="flex flex-col items-center">
+              {photoPreview ? (
+                <div className="relative">
+                  <img
+                    src={photoPreview}
+                    alt="Preview"
+                    className="w-32 h-32 rounded-full object-cover border-4 border-green-100"
+                  />
+                  <button
+                    type="button"
+                    onClick={removePhoto}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-32 h-32 rounded-full border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-green-500 transition bg-gray-50"
+                >
+                  <Camera className="w-8 h-8 text-gray-400 mb-2" />
+                  <span className="text-xs text-gray-500">Add Photo</span>
+                </div>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoChange}
+                className="hidden"
+              />
+              {!photoPreview && (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="mt-3 text-sm text-green-600 hover:text-green-700 font-medium"
+                >
+                  Upload Photo
+                </button>
+              )}
+            </div>
+          </div>
+
           {/* Name Field */}
           <div>
             <label
@@ -130,7 +219,7 @@ const Account = () => {
                   )
                 }
                 className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition"
-                placeholder="10-digit mobileNo number"
+                placeholder="10-digit mobile number"
                 maxLength="10"
               />
             </div>
@@ -208,13 +297,14 @@ const Account = () => {
           {/* Error Message */}
           {isError && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-              {isError}
+              {error?.data?.message || "An error occurred"}
             </div>
           )}
 
           {/* Submit Button */}
           <button
             onClick={handleSubmit}
+            disabled={isLoading}
             className="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 focus:ring-4 focus:ring-green-200 transition disabled:bg-gray-300 disabled:cursor-not-allowed mt-6"
           >
             {isLoading ? (

@@ -25,6 +25,22 @@ const userSchema = new mongoose.Schema(
     mobileNo:{
       type:Number,
     },
+    totalEarning:{
+      type:Number,
+      default:0
+    },
+    totalSpent:{
+      type:Number,
+      default:0
+    },
+    totalOrder:{
+      type:Number,
+      default:0
+    },
+    imageUrl: {
+      type: String,
+      default: "",
+    },
     location: {
       type: String,
     },

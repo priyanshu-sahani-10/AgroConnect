@@ -10,22 +10,26 @@ import {
   DollarSign
 } from "lucide-react";
 import { SignedIn, useClerk } from "@clerk/clerk-react";
+import { useSelector } from "react-redux";
 
 const UserProfileDropdown = ({ wrapperClassName = "" }) => {
   const { signOut } = useClerk();
   
   // Replace with your Redux selector
-  const user = {
-    name: "Priyanshu Sahani",
-    email: "priyanshu@agroconnect.com",
-    role: "buyer", // or "farmer"
-    photoUrl: "",
-    totalPurchases: 15,
-    totalSales: 0, // for farmers
-    totalSpent: 12500, // in rupees
-    totalEarnings: 0 // for farmers
-  };
+  // const user = {
+  //   name: "Priyanshu Sahani",
+  //   email: "priyanshu@agroconnect.com",
+  //   role: "buyer", // or "farmer"
+  //   photoUrl: "",
+  //   totalPurchases: 15,
+  //   totalSales: 0, // for farmers
+  //   totalSpent: 12500, // in rupees
+  //   totalEarnings: 0 // for farmers
+  // };
 
+  const user=useSelector((state)=> state.auth.user);
+  console.log("user in ProfileDropdown : ",user);
+  
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const logoutHandler = async () => {
@@ -41,9 +45,9 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
 
   return (
     <div className={`flex items-center gap-3 ${wrapperClassName}`}>
-      <span className="text-sm text-gray-600 hidden lg:block">
+      {/* <span className="text-sm text-gray-600 hidden lg:block">
         Welcome, <span className="font-semibold text-gray-900">{user?.name}</span>
-      </span>
+      </span> */}
       
       <div className="relative">
         <button 

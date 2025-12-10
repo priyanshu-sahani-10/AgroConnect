@@ -5,6 +5,10 @@ import Footer from './components/pages/Footer';
 import Navbar from './components/pages/Navbar';
 import { Route, Routes } from 'react-router-dom';
 import Layout from './components/pages/Layout';
+import Marketplace from './components/pages/Marketplace';
+import MyProducts from './components/pages/MyProducts';
+import Orders from './components/pages/Orders';
+import Chats from './components/pages/Chats';
 export default function App() {
   return (
     <>
@@ -14,6 +18,10 @@ export default function App() {
         <Route path="sign-in" element={<SignIn/>}/>
         <Route path="sign-up" element={<SignUp/>}/>
         <Route path="create-account" element={<Account/>}/>
+        <Route path="marketplace" element={<Marketplace/>}/>
+        <Route path="my-products" element={<MyProducts/>}/>
+        <Route path="orders" element={<Orders/>}/>
+        <Route path="chat" element={<Chats/>}/>
         <Route/>
       </Route>
     </Routes>
