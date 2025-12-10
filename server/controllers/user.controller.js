@@ -5,22 +5,21 @@ export const registerUser = async (req, res) => {
     const { userId } = req.auth();
     const { name, email, role, location, mobileNo } = req.body || {};
     let user = await User.findOne({ clerkId: userId });
-    if (!user) {
-      //create new user
-      if (!name || !email || !role || !location || !mobileNo) {
-        res.status(201).json({
+    if (!name || !email || !role || !location || !mobileNo) {
+        alert("All field are required")
+        return res.status(201).json({
           success: false,
           message: "All field are required",
         });
-      }
-      user = await User.create({
-        clerkId: userId,
-        name,
-        email,
-        location,
-        role: role || "buyer",
-        mobileNo,
-      });
+    }
+    if (!user) {
+      //create new user
+      res.status(400).json({
+          success: false,
+          message: "User is unauthorized , try to login again",
+        });
+      
+     
     } else {
       // Optional: keep user info in sync      
       user.name = name;
@@ -41,13 +40,13 @@ export const registerUser = async (req, res) => {
 };
 
 export const syncUser = async (req, res) => {
-  console.log("Syncing user arrived");
+  // console.log("Syncing user arrived");
   
   try {
     const { userId } = req.auth();
     const { email } = req.body;
-    console.log("ClerkId : ", userId);
-    console.log("email : ", email);
+    // console.log("ClerkId : ", userId);
+    // console.log("email : ", email);
     
     let user = await User.findOne({ clerkId: userId });
     if (!user) {

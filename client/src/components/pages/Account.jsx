@@ -1,74 +1,73 @@
-import React, { useState } from 'react';
-import { User, MapPin, Phone, Sprout } from 'lucide-react';
-
+import React, { useState } from "react";
+import { User, MapPin, Phone, Sprout } from "lucide-react";
+import { useRegisterUserMutation } from "@/features/api/authApi";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 const Account = () => {
+
+
+  const authUser = useSelector((state) => state.auth.user);
+  const userEmail = authUser?.email;
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
-    name: '',
-    role: 'buyer',
-    location: '',
-    mobile: ''
+    name: "",
+    role: "buyer",
+    location: "",
+    mobileNo: "",
   });
-  
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
 
-  const handleSubmit = async () => {
-    if (!formData.name.trim()) {
-      setError('Name is required');
-      return;
-    }
+  const [registerUser, { isLoading, isError, error, isSuccess }] =
+    useRegisterUserMutation();
 
-    if (!formData.mobile.trim() || formData.mobile.length !== 10) {
-      setError('Please enter a valid 10-digit mobile number');
-      return;
-    }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    setError('');
-    setLoading(true);
+    const payload = {
+      ...formData,
+      email: userEmail, // 👈 correct
+    };
 
     try {
-      const response = await fetch('/api/users/profile', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create profile');
-      }
-
-      setSuccess(true);
-      setTimeout(() => {
-        window.location.href = '/dashboard';
-      }, 1500);
-      
+      const res = await registerUser(payload).unwrap();
+      console.log("Register response:", res);
+      alert("Account created successfully.");
+      navigate("/");
     } catch (err) {
-      setError(err.message || 'Something went wrong. Please try again.');
-    } finally {
-      setLoading(false);
+      console.error("Error creating account:", err);
     }
   };
 
   const handleChange = (field, value) => {
-    setFormData({
-      ...formData,
-      [field]: value
-    });
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
   };
 
-  if (success) {
+
+  if (isSuccess) {
     return (
       <div className="min-h-screen bg-linear-to-br from-green-50 to-blue-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+            <svg
+              className="w-8 h-8 text-green-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M5 13l4 4L19 7"
+              />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Profile Created!</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            Profile Created!
+          </h2>
           <p className="text-gray-600">Redirecting to your dashboard...</p>
         </div>
       </div>
@@ -82,14 +81,19 @@ const Account = () => {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
             <Sprout className="w-8 h-8 text-green-600" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Welcome to AgroConnect</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            Welcome to AgroConnect
+          </h1>
           <p className="text-gray-600">Complete your profile to get started</p>
         </div>
 
         <div className="space-y-5">
           {/* Name Field */}
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Full Name
             </label>
             <div className="relative">
@@ -98,7 +102,7 @@ const Account = () => {
                 type="text"
                 id="name"
                 value={formData.name}
-                onChange={(e) => handleChange('name', e.target.value)}
+                onChange={(e) => handleChange("name", e.target.value)}
                 className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition"
                 placeholder="Enter your full name"
               />
@@ -107,18 +111,26 @@ const Account = () => {
 
           {/* Mobile Number */}
           <div>
-            <label htmlFor="mobile" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="mobileNo"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Mobile Number
             </label>
             <div className="relative">
               <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="tel"
-                id="mobile"
-                value={formData.mobile}
-                onChange={(e) => handleChange('mobile', e.target.value.replace(/\D/g, '').slice(0, 10))}
+                id="mobileNo"
+                value={formData.mobileNo}
+                onChange={(e) =>
+                  handleChange(
+                    "mobileNo",
+                    e.target.value.replace(/\D/g, "").slice(0, 10)
+                  )
+                }
                 className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition"
-                placeholder="10-digit mobile number"
+                placeholder="10-digit mobileNo number"
                 maxLength="10"
               />
             </div>
@@ -131,29 +143,41 @@ const Account = () => {
             </label>
             <div className="grid grid-cols-2 gap-3">
               <div
-                onClick={() => handleChange('role', 'farmer')}
+                onClick={() => handleChange("role", "farmer")}
                 className={`flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition ${
-                  formData.role === 'farmer'
-                    ? 'border-green-500 bg-green-50'
-                    : 'border-gray-200 hover:border-gray-300'
+                  formData.role === "farmer"
+                    ? "border-green-500 bg-green-50"
+                    : "border-gray-200 hover:border-gray-300"
                 }`}
               >
                 <div className="text-center">
-                  <Sprout className={`w-6 h-6 mx-auto mb-1 ${formData.role === 'farmer' ? 'text-green-600' : 'text-gray-400'}`} />
+                  <Sprout
+                    className={`w-6 h-6 mx-auto mb-1 ${
+                      formData.role === "farmer"
+                        ? "text-green-600"
+                        : "text-gray-400"
+                    }`}
+                  />
                   <span className="font-medium text-sm">Farmer</span>
                 </div>
               </div>
-              
+
               <div
-                onClick={() => handleChange('role', 'buyer')}
+                onClick={() => handleChange("role", "buyer")}
                 className={`flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition ${
-                  formData.role === 'buyer'
-                    ? 'border-green-500 bg-green-50'
-                    : 'border-gray-200 hover:border-gray-300'
+                  formData.role === "buyer"
+                    ? "border-green-500 bg-green-50"
+                    : "border-gray-200 hover:border-gray-300"
                 }`}
               >
                 <div className="text-center">
-                  <User className={`w-6 h-6 mx-auto mb-1 ${formData.role === 'buyer' ? 'text-green-600' : 'text-gray-400'}`} />
+                  <User
+                    className={`w-6 h-6 mx-auto mb-1 ${
+                      formData.role === "buyer"
+                        ? "text-green-600"
+                        : "text-gray-400"
+                    }`}
+                  />
                   <span className="font-medium text-sm">Buyer</span>
                 </div>
               </div>
@@ -162,7 +186,10 @@ const Account = () => {
 
           {/* Location */}
           <div>
-            <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="location"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Location
             </label>
             <div className="relative">
@@ -171,7 +198,7 @@ const Account = () => {
                 type="text"
                 id="location"
                 value={formData.location}
-                onChange={(e) => handleChange('location', e.target.value)}
+                onChange={(e) => handleChange("location", e.target.value)}
                 className="w-full pl-11 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition"
                 placeholder="City or region"
               />
@@ -179,28 +206,42 @@ const Account = () => {
           </div>
 
           {/* Error Message */}
-          {error && (
+          {isError && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-              {error}
+              {isError}
             </div>
           )}
 
           {/* Submit Button */}
           <button
             onClick={handleSubmit}
-            disabled={loading || !formData.name.trim() || !formData.mobile.trim()}
             className="w-full bg-green-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 focus:ring-4 focus:ring-green-200 transition disabled:bg-gray-300 disabled:cursor-not-allowed mt-6"
           >
-            {loading ? (
+            {isLoading ? (
               <span className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
                 </svg>
                 Creating...
               </span>
             ) : (
-              'Complete Setup'
+              "Complete Setup"
             )}
           </button>
         </div>
@@ -211,6 +252,6 @@ const Account = () => {
       </div>
     </div>
   );
-}
+};
 
 export default Account;
