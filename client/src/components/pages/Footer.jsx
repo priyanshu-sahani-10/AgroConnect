@@ -63,22 +63,22 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="relative bg-linear-to-b from-green-50 to-emerald-100 dark:from-gray-900 dark:to-gray-800 border-t border-green-200 dark:border-gray-700">
-      <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-green-500 via-emerald-500 to-green-600 dark:from-green-600 dark:via-emerald-600 dark:to-green-700"></div>
+    <footer className="relative bg-gradient-to-b from-green-50 to-emerald-100 dark:from-gray-900 dark:to-gray-800 border-t border-green-200 dark:border-gray-700">
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 dark:from-green-600 dark:via-emerald-600 dark:to-green-700"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
           <div className="lg:col-span-2 space-y-4">
             <div className="inline-flex items-center gap-2 group cursor-pointer">
-              <div className="w-10 h-10 bg-linear-to-br from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300 shadow-md dark:shadow-green-900/50">
+              <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300 shadow-md dark:shadow-green-900/50">
                 <Sprout className="text-white w-6 h-6" />
               </div>
-              <h2 className="text-2xl font-bold bg-linear-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent">
                 AgroConnect
               </h2>
             </div>
 
-            <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
               Bridging the gap between farmers and buyers. Fresh produce,
               fair prices, and direct connections for a sustainable future.
             </p>
@@ -93,7 +93,7 @@ const Footer = () => {
                     aria-label={social.label}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 rounded-full bg-green-200 dark:bg-gray-700 flex items-center justify-center hover:bg-linear-to-br hover:from-green-500 hover:to-emerald-600 dark:hover:from-green-600 dark:hover:to-emerald-700 text-gray-600 dark:text-gray-300 hover:text-white transition-all duration-300 hover:scale-110"
+                    className="w-10 h-10 rounded-full bg-green-200 dark:bg-gray-700 flex items-center justify-center hover:bg-gradient-to-br hover:from-green-500 hover:to-emerald-600 dark:hover:from-green-600 dark:hover:to-emerald-700 text-gray-600 dark:text-gray-300 hover:text-white transition-all duration-300 hover:scale-110"
                   >
                     <Icon className="w-4 h-4" />
                   </a>
@@ -103,7 +103,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
               Product
             </h3>
             <ul className="space-y-2">
@@ -111,7 +111,7 @@ const Footer = () => {
                 <li key={idx}>
                   <a
                     // href={link.path}
-                    className="text-sm text-blue-500 dark:text-blue-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-pointer"
+                    className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
                   >
                     {link.name}
                   </a>
@@ -121,7 +121,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
               Company
             </h3>
             <ul className="space-y-2">
@@ -129,7 +129,7 @@ const Footer = () => {
                 <li key={idx}>
                   <a
                     // href={link.path}
-                    className="text-sm text-blue-500 dark:text-blue-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-pointer"
+                    className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
                   >
                     {link.name}
                   </a>
@@ -139,7 +139,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
               Support
             </h3>
             <ul className="space-y-2">
@@ -147,7 +147,7 @@ const Footer = () => {
                 <li key={idx}>
                   <a
                     // href={link.path}
-                    className="text-sm text-blue-500 dark:text-blue-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-pointer"
+                    className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
                   >
                     {link.name}
                   </a>
@@ -157,7 +157,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
               Legal
             </h3>
             <ul className="space-y-2">
@@ -165,7 +165,7 @@ const Footer = () => {
                 <li key={idx}>
                   <a
                     // href={link.path}
-                    className="text-sm text-blue-500 dark:text-blue-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-pointer"
+                    className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"
                   >
                     {link.name}
                   </a>
@@ -178,7 +178,7 @@ const Footer = () => {
         <div className="py-8 border-t border-green-200 dark:border-gray-700">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center md:text-left">
             <div className="flex items-center justify-center md:justify-start gap-3">
-              <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center">
                 <Mail className="w-5 h-5 text-green-600 dark:text-green-400" />
               </div>
               <div>
@@ -187,7 +187,7 @@ const Footer = () => {
                 </p>
                 <a
                   href="mailto:support@agroconnect.com"
-                  className="text-sm font-medium text-gray-900 dark:text-gray-100 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+                  className="text-sm font-medium text-gray-900 dark:text-gray-200 hover:text-green-600 dark:hover:text-green-400 transition-colors"
                 >
                   priyanshusahani2341@gmail.com
                 </a>
@@ -195,7 +195,7 @@ const Footer = () => {
             </div>
 
             <div className="flex items-center justify-center md:justify-start gap-3">
-              <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/50 flex items-center justify-center">
                 <Phone className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
               </div>
               <div>
@@ -204,7 +204,7 @@ const Footer = () => {
                 </p>
                 <a
                   href="tel:+918369601243"
-                  className="text-sm font-medium text-gray-900 dark:text-gray-100 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+                  className="text-sm font-medium text-gray-900 dark:text-gray-200 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
                 >
                   +91 8369601243
                 </a>
@@ -212,14 +212,14 @@ const Footer = () => {
             </div>
 
             <div className="flex items-center justify-center md:justify-start gap-3">
-              <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center">
                 <MapPin className="w-5 h-5 text-green-600 dark:text-green-400" />
               </div>
               <div>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
                   Visit us
                 </p>
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-200">
                   MNNIT Allahabad, 211004
                 </p>
               </div>
@@ -229,7 +229,7 @@ const Footer = () => {
 
         <div className="py-6 border-t border-green-200 dark:border-gray-700">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-1">
+            <p className="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-1">
               © {new Date().getFullYear()} AgroConnect. Made with{" "}
               <Heart className="w-4 h-4 text-red-500 fill-red-500 inline animate-pulse" />{" "}
               for farmers and sustainable agriculture.
@@ -241,7 +241,7 @@ const Footer = () => {
               </p>
               <button
                 onClick={scrollToTop}
-                className="w-10 h-10 rounded-full bg-linear-to-br from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white flex items-center justify-center hover:scale-110 transition-transform duration-300 shadow-lg dark:shadow-green-900/50"
+                className="w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white flex items-center justify-center hover:scale-110 transition-transform duration-300 shadow-lg dark:shadow-green-900/50"
                 aria-label="Scroll to top"
               >
                 <ArrowUp className="w-5 h-5" />

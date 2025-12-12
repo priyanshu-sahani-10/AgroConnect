@@ -54,7 +54,7 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
           onClick={() => setDropdownOpen(!dropdownOpen)}
           className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
         >
-          <div className="w-10 h-10 rounded-full border-2 border-green-500 dark:border-green-400 bg-linear-to-br from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white flex items-center justify-center font-bold shadow-md dark:shadow-green-900/50">
+          <div className="w-10 h-10 rounded-full border-2 border-green-500 dark:border-green-400 bg-gradient-to-br from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white flex items-center justify-center font-bold shadow-md dark:shadow-green-900/50">
             {user?.imageUrl ? (
               <img src={user.imageUrl} alt={user.name} className="w-full h-full rounded-full object-cover" />
             ) : (
@@ -72,9 +72,9 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
             />
             <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl dark:shadow-gray-950/70 border border-gray-200 dark:border-gray-700 z-20 overflow-hidden">
               {/* User Info Header */}
-              <div className="p-4 bg-linear-to-r from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white">
+              <div className="p-4 bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-12 h-12 rounded-full border-2 border-white bg-white/20 dark:bg-white/10 flex items-center justify-center font-bold text-lg">
+                  <div className="w-12 h-12 rounded-full border-2 border-white bg-white/20 flex items-center justify-center font-bold text-lg">
                     {user?.imageUrl ? (
                       <img src={user.imageUrl} alt={user.name} className="w-full h-full rounded-full object-cover" />
                     ) : (
@@ -83,10 +83,10 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
                   </div>
                   <div>
                     <p className="font-semibold text-lg">{user?.name}</p>
-                    <p className="text-xs text-green-100 dark:text-green-50 capitalize">{user?.role}</p>
+                    <p className="text-xs text-green-50 capitalize">{user?.role}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-1 text-sm text-green-100 dark:text-green-50">
+                <div className="flex items-center gap-1 text-sm text-green-50">
                   <Mail className="w-3 h-3" />
                   <span className="truncate">{user?.email}</span>
                 </div>

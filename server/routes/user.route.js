@@ -6,6 +6,6 @@ import upload from "../utils/multer.js";
 const userRouter = Router();
 
 userRouter.route("/sync").post(syncUser);
-userRouter.route("/register").post(upload.single("photo"),registerUser);
+userRouter.route("/register-user").post(upload.single("photo"),registerUser);
 
 export default userRouter;

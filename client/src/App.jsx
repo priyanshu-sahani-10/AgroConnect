@@ -9,6 +9,7 @@ import Marketplace from './components/pages/Marketplace';
 import MyProducts from './components/pages/MyProducts';
 import Orders from './components/pages/Orders';
 import Chats from './components/pages/Chats';
+import RegisterCrop from './components/pages/RegisterCrop';
 export default function App() {
   return (
     <>
@@ -22,6 +23,8 @@ export default function App() {
         <Route path="my-products" element={<MyProducts/>}/>
         <Route path="orders" element={<Orders/>}/>
         <Route path="chat" element={<Chats/>}/>
+        <Route path="register-crop" element={<RegisterCrop/>}/>
+
         <Route/>
       </Route>
     </Routes>
