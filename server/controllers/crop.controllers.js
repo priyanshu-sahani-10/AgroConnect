@@ -38,6 +38,7 @@ export const RegisterCrop = async (req, res) => {
       });
     }
     const { userId } = req.auth();
+     const mongoUser = await User.findOne({ userId });
     const newCrop = await Crop.create({
       name,
       description,
@@ -47,7 +48,7 @@ export const RegisterCrop = async (req, res) => {
       price,
       location,
       category,
-      postedBy:userId,
+      reportedBy:mongoUser._id,
     });
     return res.status(201).json({
         success:true,
@@ -64,26 +65,30 @@ export const RegisterCrop = async (req, res) => {
 };
 
 
-export const getAllCrops = async (req,res) =>{
+export const getAllCrops = async (req, res) => {
   try {
-    const crops = await Crop.find().populate("reportedBy","name").sort ({createdAt:-1});
+    const crops = await Crop.find()
+      .populate("reportedBy", "name")
+      .sort({ createdAt: -1 });
+
     if (!crops || crops.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "No issues found",
+        message: "No crops found",
       });
     }
 
     return res.status(200).json({
       success: true,
-      message: "Issues fetched successfully",
-      data: issues,
+      message: "Crops fetched successfully",
+      data: crops,
     });
   } catch (error) {
     return res.status(500).json({
       success: false,
       message: "Server error",
+      error: error.message,
     });
   }
-}
+};
 

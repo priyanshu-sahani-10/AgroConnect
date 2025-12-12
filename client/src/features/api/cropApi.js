@@ -29,7 +29,7 @@ export const cropApi = createApi({
         method:"GET",
         credentials: "include",
       }),
-      providesTags:["Allcrop"]
+      providesTags:["AllCrop"]
     })
   }),
 });

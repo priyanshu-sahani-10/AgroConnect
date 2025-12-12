@@ -18,7 +18,7 @@ import DarkMode from "./DarkMode";
 
 export default function Navbar() {
   const user = useSelector((state) => state.auth.user);
-  console.log("User in Navbar : ", user);
+  // console.log("User in Navbar : ", user);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);

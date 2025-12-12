@@ -5,6 +5,6 @@ import upload from '../utils/multer.js';
 const cropRouter=Router();
 
 cropRouter.route("/register-crop").post( upload.single("imageUrl"),RegisterCrop);
-cropRouter.route("/getCrops").post(getAllCrops);
+cropRouter.route("/getCrops").get(getAllCrops);
 
 export default cropRouter

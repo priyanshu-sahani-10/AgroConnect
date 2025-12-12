@@ -35,8 +35,9 @@ const cropSchema = new mongoose.Schema(
       required: true,
       min: 0,
     },
-    postedBy: {
-      type: String,
+    reportedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
   },

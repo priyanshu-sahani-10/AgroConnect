@@ -28,7 +28,7 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
   // };
 
   const user=useSelector((state)=> state.auth.user);
-  console.log("user in ProfileDropdown : ",user);
+  // console.log("user in ProfileDropdown : ",user);
   
   const [dropdownOpen, setDropdownOpen] = useState(false);
 

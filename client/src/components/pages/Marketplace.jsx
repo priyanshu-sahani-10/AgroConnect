@@ -10,6 +10,7 @@ import {
   ShoppingCart,
   User
 } from "lucide-react";
+import { useGetAllCropQuery } from "@/features/api/cropApi.js";
 
 // Mock data - replace with your actual API data
 const mockCrops = [
@@ -164,7 +165,10 @@ const Marketplace = () => {
   const [selectedCrop, setSelectedCrop] = useState(null);
 
   // Simulate API data
-  const crops = mockCrops;
+  const {data  , isError,isLoading}=useGetAllCropQuery();
+  console.log("backend crops : ", data);
+  
+  const crops=data?.data || []
 
   const filteredCrops =
     selectedCategory === "All"
@@ -198,6 +202,24 @@ const Marketplace = () => {
   const handleAddToCart = (cropId) => {
     alert(`Crop ${cropId} added to cart!`);
   };
+
+  if (isLoading) {
+  return (
+    <div className="p-8 text-center">
+      <p className="text-lg">Loading crops…</p>
+    </div>
+  );
+}
+
+if (isError) {
+  return (
+    <div className="p-8 text-center">
+      <p className="text-lg text-red-600">Failed to load crops. Try again later.</p>
+    </div>
+  );
+}
+
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6 transition-colors duration-300">
@@ -341,6 +363,8 @@ const Marketplace = () => {
             ))
           )}
         </div>
+
+        
 
         {/* Pagination Controls */}
         {totalPages > 1 && (
