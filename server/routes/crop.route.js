@@ -1,8 +1,10 @@
 import express, {Router} from 'express'
-import uploadCrop from '../controllers/crop.controllers.js'
+import { getAllCrops, RegisterCrop } from '../controllers/crop.controllers.js';
+import upload from '../utils/multer.js';
 
 const cropRouter=Router();
 
-cropRouter.route("/upload").post(uploadCrop);
+cropRouter.route("/register-crop").post( upload.single("imageUrl"),RegisterCrop);
+cropRouter.route("/getCrops").get(getAllCrops);
 
 export default cropRouter

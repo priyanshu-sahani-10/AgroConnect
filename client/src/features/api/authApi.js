@@ -29,7 +29,7 @@ export const authApi = createApi({
     // 1) registerUser mutation
     registerUser: builder.mutation({
       query: (inputData) => ({
-        url: "register",
+        url: "register-user",
         method: "POST",
         body: inputData,
       }),
@@ -69,4 +69,3 @@ export const authApi = createApi({
 });
 
 export const { useRegisterUserMutation, useSyncUserMutation } = authApi;
-export default authApi;

@@ -6,6 +6,10 @@ const cropSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    category: {
+      type: String,
+      required: true,
+    },
     productionYear: {
       type: String,
       required: true,
@@ -31,13 +35,11 @@ const cropSchema = new mongoose.Schema(
       required: true,
       min: 0,
     },
-    postedBy: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: "User",
-  required: true,
-}
-
-    
+    reportedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   { timestamps: true }
 );

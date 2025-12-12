@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import cloudinary from "../utils/cloudinary.js";
 
 export const registerUser = async (req, res) => {
   try {
@@ -6,15 +7,22 @@ export const registerUser = async (req, res) => {
     const { name, email, role, location, mobileNo } = req.body || {};
     let user = await User.findOne({ clerkId: userId });
     if (!name || !email || !role || !location || !mobileNo) {
-        alert("All field are required")
         return res.status(201).json({
           success: false,
           message: "All field are required",
         });
     }
+    let imageUrl = "";
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        resource_type: "auto",
+        folder: "issues",
+      });
+      imageUrl = result.secure_url;
+    }
     if (!user) {
       //create new user
-      res.status(400).json({
+      return res.status(400).json({
           success: false,
           message: "User is unauthorized , try to login again",
         });
@@ -27,7 +35,7 @@ export const registerUser = async (req, res) => {
       user.role = role;
       user.location = location;
       user.mobileNo = mobileNo;
-
+      user.imageUrl=imageUrl;
       await user.save();
     }
     return res.status(200).json({
