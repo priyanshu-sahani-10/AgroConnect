@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Upload, X, MapPin, Package, DollarSign, Calendar, ImagePlus, Loader2, Wheat } from 'lucide-react';
+import { Upload, X, MapPin, Package, IndianRupeeIcon, Calendar, ImagePlus, Loader2, Wheat } from 'lucide-react';
 import { useRegisterCropMutation } from '@/features/api/cropApi';
 import {  useNavigate } from 'react-router-dom';
 
@@ -278,7 +278,7 @@ function RegisterCrop() {
                   Price (₹/kg) *
                 </label>
                 <div className="relative">
-                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
+                  <IndianRupeeIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
                   <input
                     type="number"
                     id="price"

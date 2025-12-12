@@ -1,7 +1,7 @@
 import Crop from "../models/crop.model.js";
 import cloudinary from "../utils/cloudinary.js";
 
-const RegisterCrop = async (req, res) => {
+export const RegisterCrop = async (req, res) => {
   try {
     const {
       name,
@@ -63,4 +63,27 @@ const RegisterCrop = async (req, res) => {
   }
 };
 
-export default RegisterCrop;
+
+export const getAllCrops = async (req,res) =>{
+  try {
+    const crops = await Crop.find().populate("reportedBy","name").sort ({createdAt:-1});
+    if (!crops || crops.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No issues found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Issues fetched successfully",
+      data: issues,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+}
+

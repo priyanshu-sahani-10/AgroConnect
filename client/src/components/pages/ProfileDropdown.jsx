@@ -7,7 +7,7 @@ import {
   ShoppingCart, 
   Package, 
   Mail,
-  DollarSign
+  IndianRupeeIcon
 } from "lucide-react";
 import { SignedIn, useClerk } from "@clerk/clerk-react";
 import { useSelector } from "react-redux";
@@ -106,7 +106,7 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
                       </div>
                       <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
                         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-1">
-                          <DollarSign className="w-4 h-4" />
+                          <IndianRupeeIcon className="w-4 h-4" />
                           <span className="text-xs font-medium">Total Spent</span>
                         </div>
                         <p className="text-xl font-bold text-green-600 dark:text-green-400">₹{user.totalSpent.toLocaleString()}</p>
@@ -123,7 +123,7 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
                       </div>
                       <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
                         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-1">
-                          <DollarSign className="w-4 h-4" />
+                          <IndianRupeeIcon className="w-4 h-4" />
                           <span className="text-xs font-medium">Total Earned</span>
                         </div>
                         <p className="text-xl font-bold text-green-600 dark:text-green-400">₹{user.totalEarning.toLocaleString()}</p>

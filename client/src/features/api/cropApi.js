@@ -9,6 +9,9 @@ export const cropApi = createApi({
     credentials: "include",
   }),
 
+  tagTypes: ["Crop", "UserCrop", "AllCrop"],
+
+
   endpoints: (builder) => ({
     // 1. Register crop API
     registerCrop: builder.mutation({
@@ -18,8 +21,17 @@ export const cropApi = createApi({
         body: inputData,
       }),
     }),
+
+    //2. Get All crops API
+    getAllCrop:builder.query({
+      query:()=>({
+        url:"getCrops",
+        method:"GET",
+        credentials: "include",
+      }),
+      providesTags:["Allcrop"]
+    })
   }),
 });
 
-export const { useRegisterCropMutation } = cropApi;
-export default cropApi;
+export const { useRegisterCropMutation , useGetAllCropQuery} = cropApi;
