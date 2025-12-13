@@ -1,4 +1,5 @@
 import Crop from "../models/crop.model.js";
+import User from "../models/user.model.js";
 import cloudinary from "../utils/cloudinary.js";
 
 export const RegisterCrop = async (req, res) => {
@@ -38,7 +39,9 @@ export const RegisterCrop = async (req, res) => {
       });
     }
     const { userId } = req.auth();
-     const mongoUser = await User.findOne({ userId });
+    const mongoUser = await User.findOne({ clerkId: userId });
+    // console.log("UserId for register crop : ",userId);    
+    // console.log("MongoUser for register crop : ",mongoUser);    
     const newCrop = await Crop.create({
       name,
       description,
