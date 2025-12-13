@@ -30,8 +30,23 @@ export const cropApi = createApi({
         credentials: "include",
       }),
       providesTags:["AllCrop"]
+    }),
+
+
+    //3.Get All user Crops Api
+    getAllUserCrop:builder.query({
+      query:()=>({
+        url:"userCrops",
+        method:"GET",
+        credentials:"include"
+      }),
+      providesTags:["Crop","UserCrop"]
     })
+
+
+
+
   }),
 });
 
-export const { useRegisterCropMutation , useGetAllCropQuery} = cropApi;
+export const { useRegisterCropMutation , useGetAllCropQuery, useGetAllUserCropQuery} = cropApi;

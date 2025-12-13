@@ -95,3 +95,40 @@ export const getAllCrops = async (req, res) => {
   }
 };
 
+
+
+
+export const getUserCrops = async (req, res) => {
+  try {
+    const { userId } = req.auth(); // Clerk ID
+
+    // 1️⃣ Find Mongo user
+    const user = await User.findOne({ clerkId: userId });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // 2️⃣ Query crops using Mongo ObjectId
+    const crops = await Crop.find({ reportedBy: user._id })
+      .sort({ createdAt: -1 })
+      .populate("reportedBy", "name email");
+
+    return res.status(200).json({
+      success: true,
+      message: "Fetched user registered crops",
+      data: crops,
+    });
+  } catch (err) {
+    console.error("User crop fetch error", err);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+
