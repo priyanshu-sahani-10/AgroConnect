@@ -39,6 +39,7 @@ export const registerUser = async (req, res) => {
       await user.save();
     }
     return res.status(200).json({
+      success:true,
       user,
     });
   } catch (error) {
@@ -69,6 +70,50 @@ export const syncUser = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Failed to sync user",
+    });
+  }
+};
+
+
+export const updateUserProfile = async (req, res) => {
+  try {
+    const { userId } = req.auth();
+    const user = await User.findOne({ clerkId: userId });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    const { name, role, location, mobileNo } = req.body;
+
+    // 🔐 Update only provided fields
+    if (name) user.name = name;
+    if (role) user.role = role;
+    if (location) user.location = location;
+    if (mobileNo) user.mobileNo = mobileNo;
+
+    // 🖼️ Image handling (SAFE)
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "issues",
+        resource_type: "auto",
+      });
+      user.imageUrl = result.secure_url;
+    }
+    // ❗ if no req.file → imageUrl stays unchanged
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      data: user,
+    });
+  } catch (err) {
+    console.error("Update profile error:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
     });
   }
 };

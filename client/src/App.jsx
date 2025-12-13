@@ -10,6 +10,8 @@ import MyProducts from './components/pages/MyProducts';
 import Orders from './components/pages/Orders';
 import Chats from './components/pages/Chats';
 import RegisterCrop from './components/pages/RegisterCrop';
+import Profile from './components/pages/Profile';
+import EditProfile from './components/pages/EditProfile';
 export default function App() {
   return (
     <>
@@ -24,6 +26,8 @@ export default function App() {
         <Route path="orders" element={<Orders/>}/>
         <Route path="chat" element={<Chats/>}/>
         <Route path="register-crop" element={<RegisterCrop/>}/>
+        <Route path="profile" element={<Profile/>}/>
+        <Route path="edit-profile" element={<EditProfile/>}/>
 
         <Route/>
       </Route>
