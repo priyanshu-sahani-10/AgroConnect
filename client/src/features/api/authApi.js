@@ -64,8 +64,30 @@ export const authApi = createApi({
       },
     }),
 
+    //3.Update User Redux Api
+    updateUser: builder.mutation({
+      query: (formData) => ({
+        url: "updateUser", // must match backend route
+        method: "PUT", // update → PUT
+        body: formData, // FormData (name, role, location, photo)
+      }),
+
+      async onQueryStarted(_, { queryFulfilled, dispatch }) {
+        try {
+          const { data } = await queryFulfilled;
+
+          // 🔄 Sync updated user in Redux
+          if (data?.data) {
+            dispatch(userLoggedIn({ user: data.data }));
+          }
+        } catch (error) {
+          console.log("Backend error in update user:", error);
+        }
+      },
+    }),
+
     // (Optional) you can also add login/logout mutations similarly
   }),
 });
 
-export const { useRegisterUserMutation, useSyncUserMutation } = authApi;
+export const { useRegisterUserMutation, useSyncUserMutation , useUpdateUserMutation} = authApi;

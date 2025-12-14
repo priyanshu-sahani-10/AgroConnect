@@ -15,17 +15,6 @@ import { useSelector } from "react-redux";
 const UserProfileDropdown = ({ wrapperClassName = "" }) => {
   const { signOut } = useClerk();
   
-  // Replace with your Redux selector
-  // const user = {
-  //   name: "Priyanshu Sahani",
-  //   email: "priyanshu@agroconnect.com",
-  //   role: "buyer", // or "farmer"
-  //   photoUrl: "",
-  //   totalPurchases: 15,
-  //   totalSales: 0, // for farmers
-  //   totalSpent: 12500, // in rupees
-  //   totalEarnings: 0 // for farmers
-  // };
 
   const user=useSelector((state)=> state.auth.user);
   // console.log("user in ProfileDropdown : ",user);
@@ -36,8 +25,6 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
     try {
       await signOut();
       setDropdownOpen(false);
-      // Optional: redirect to home or login page
-      // window.location.href = "/";
     } catch (error) {
       console.error("Logout error:", error);
     }

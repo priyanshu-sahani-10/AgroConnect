@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import { 
-  Package, 
-  Calendar, 
-  MapPin, 
-  IndianRupeeIcon, 
+import {
+  Package,
+  Calendar,
+  MapPin,
+  IndianRupeeIcon,
   Wheat,
-  ChevronLeft, 
+  ChevronLeft,
   ChevronRight,
   ShoppingCart,
-  User
+  User,
 } from "lucide-react";
 import { useGetAllCropQuery } from "@/features/api/cropApi.js";
 
@@ -19,26 +19,30 @@ const mockCrops = [
     name: "Organic Wheat",
     category: "Cereals",
     productionYear: "2024",
-    description: "Premium quality organic wheat grown without pesticides. Perfect for making flour and bread.",
-    price: 45.50,
+    description:
+      "Premium quality organic wheat grown without pesticides. Perfect for making flour and bread.",
+    price: 45.5,
     location: "Mumbai, Maharashtra",
     available: 500,
-    imageUrl: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=800",
+    imageUrl:
+      "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=800",
     farmer: { name: "Rajesh Kumar", _id: "f1" },
-    createdAt: "2024-12-01"
+    createdAt: "2024-12-01",
   },
   {
     _id: "2",
     name: "Basmati Rice",
     category: "Grains",
     productionYear: "2024",
-    description: "Aromatic long-grain basmati rice, aged for perfect cooking quality.",
-    price: 85.00,
+    description:
+      "Aromatic long-grain basmati rice, aged for perfect cooking quality.",
+    price: 85.0,
     location: "Punjab",
     available: 1000,
-    imageUrl: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800",
+    imageUrl:
+      "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800",
     farmer: { name: "Simran Singh", _id: "f2" },
-    createdAt: "2024-11-28"
+    createdAt: "2024-11-28",
   },
   {
     _id: "3",
@@ -46,64 +50,72 @@ const mockCrops = [
     category: "Pulses",
     productionYear: "2024",
     description: "High-protein red lentils, perfectly cleaned and sorted.",
-    price: 92.00,
+    price: 92.0,
     location: "Madhya Pradesh",
     available: 300,
-    imageUrl: "https://images.unsplash.com/photo-1596040033229-a0b67219daf0?w=800",
+    imageUrl:
+      "https://images.unsplash.com/photo-1596040033229-a0b67219daf0?w=800",
     farmer: { name: "Amit Patel", _id: "f3" },
-    createdAt: "2024-11-25"
+    createdAt: "2024-11-25",
   },
   {
     _id: "4",
     name: "Fresh Tomatoes",
     category: "Vegetables",
     productionYear: "2024",
-    description: "Farm-fresh red tomatoes, rich in vitamins and perfect for cooking.",
-    price: 35.00,
+    description:
+      "Farm-fresh red tomatoes, rich in vitamins and perfect for cooking.",
+    price: 35.0,
     location: "Karnataka",
     available: 200,
-    imageUrl: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=800",
+    imageUrl:
+      "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=800",
     farmer: { name: "Lakshmi Reddy", _id: "f4" },
-    createdAt: "2024-12-10"
+    createdAt: "2024-12-10",
   },
   {
     _id: "5",
     name: "Alphonso Mangoes",
     category: "Fruits",
     productionYear: "2024",
-    description: "The king of mangoes - sweet, juicy Alphonso mangoes from Ratnagiri.",
-    price: 250.00,
+    description:
+      "The king of mangoes - sweet, juicy Alphonso mangoes from Ratnagiri.",
+    price: 250.0,
     location: "Ratnagiri, Maharashtra",
     available: 150,
     imageUrl: "https://images.unsplash.com/photo-1553279768-865429fa0078?w=800",
     farmer: { name: "Pradeep Naik", _id: "f5" },
-    createdAt: "2024-12-08"
+    createdAt: "2024-12-08",
   },
   {
     _id: "6",
     name: "Turmeric Powder",
     category: "Spices",
     productionYear: "2023",
-    description: "Pure turmeric powder with high curcumin content, naturally grown.",
-    price: 180.00,
+    description:
+      "Pure turmeric powder with high curcumin content, naturally grown.",
+    price: 180.0,
     location: "Andhra Pradesh",
     available: 100,
-    imageUrl: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=800",
+    imageUrl:
+      "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=800",
     farmer: { name: "Venkat Rao", _id: "f6" },
-    createdAt: "2024-12-05"
+    createdAt: "2024-12-05",
   },
   {
     _id: "7",
     name: "Green Peas",
     category: "Vegetables",
     productionYear: "2024",
-    description: "Fresh green peas, harvested at peak ripeness for maximum sweetness.",
-    price: 60.00,
+    description:
+      "Fresh green peas, harvested at peak ripeness for maximum sweetness.",
+    price: 60.0,
     location: "Uttar Pradesh",
     available: 250,
-    imageUrl: "https://images.unsplash.com/photo-1587735243615-c03f25aaff15?w=800",
+    imageUrl:
+      "https://images.unsplash.com/photo-1587735243615-c03f25aaff15?w=800",
     farmer: { name: "Mohan Verma", _id: "f7" },
-    createdAt: "2024-12-11"
+    createdAt: "2024-12-11",
   },
   {
     _id: "8",
@@ -111,12 +123,13 @@ const mockCrops = [
     category: "Spices",
     productionYear: "2024",
     description: "Spicy red chilies with vibrant color and intense flavor.",
-    price: 220.00,
+    price: 220.0,
     location: "Andhra Pradesh",
     available: 80,
-    imageUrl: "https://images.unsplash.com/photo-1583032015627-7a5c8b6d6c3e?w=800",
+    imageUrl:
+      "https://images.unsplash.com/photo-1583032015627-7a5c8b6d6c3e?w=800",
     farmer: { name: "Ravi Kumar", _id: "f8" },
-    createdAt: "2024-12-09"
+    createdAt: "2024-12-09",
   },
   {
     _id: "9",
@@ -124,12 +137,13 @@ const mockCrops = [
     category: "Pulses",
     productionYear: "2024",
     description: "Premium kabuli chana, perfect for curries and salads.",
-    price: 95.00,
+    price: 95.0,
     location: "Rajasthan",
     available: 400,
-    imageUrl: "https://images.unsplash.com/photo-1610415946035-bad6fc9b5b6e?w=800",
+    imageUrl:
+      "https://images.unsplash.com/photo-1610415946035-bad6fc9b5b6e?w=800",
     farmer: { name: "Sunita Sharma", _id: "f9" },
-    createdAt: "2024-12-07"
+    createdAt: "2024-12-07",
   },
   {
     _id: "10",
@@ -137,13 +151,13 @@ const mockCrops = [
     category: "Fruits",
     productionYear: "2024",
     description: "Crisp and tangy green apples from the hills.",
-    price: 150.00,
+    price: 150.0,
     location: "Himachal Pradesh",
     available: 180,
     imageUrl: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=800",
     farmer: { name: "Anil Thakur", _id: "f10" },
-    createdAt: "2024-12-06"
-  }
+    createdAt: "2024-12-06",
+  },
 ];
 
 const categories = [
@@ -154,7 +168,7 @@ const categories = [
   "Fruits",
   "Vegetables",
   "Spices",
-  "Other"
+  "Other",
 ];
 
 const ITEMS_PER_PAGE = 9;
@@ -165,10 +179,10 @@ const Marketplace = () => {
   const [selectedCrop, setSelectedCrop] = useState(null);
 
   // Simulate API data
-  const {data  , isError,isLoading}=useGetAllCropQuery();
-  console.log("backend crops : ", data);
-  
-  const crops=data?.data || []
+  const { data, isError, isLoading } = useGetAllCropQuery();
+  // console.log("backend crops : ", data);
+
+  const crops = data?.data || [];
 
   const filteredCrops =
     selectedCategory === "All"
@@ -192,7 +206,7 @@ const Marketplace = () => {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleCropClick = (crop) => {
@@ -204,22 +218,22 @@ const Marketplace = () => {
   };
 
   if (isLoading) {
-  return (
-    <div className="p-8 text-center">
-      <p className="text-lg">Loading crops…</p>
-    </div>
-  );
-}
+    return (
+      <div className="p-8 text-center">
+        <p className="text-lg">Loading crops…</p>
+      </div>
+    );
+  }
 
-if (isError) {
-  return (
-    <div className="p-8 text-center">
-      <p className="text-lg text-red-600">Failed to load crops. Try again later.</p>
-    </div>
-  );
-}
-
-
+  if (isError) {
+    return (
+      <div className="p-8 text-center">
+        <p className="text-lg text-red-600">
+          Failed to load crops. Try again later.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6 transition-colors duration-300">
@@ -256,7 +270,8 @@ if (isError) {
         {/* Results Summary */}
         {sortedCrops.length > 0 && (
           <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
-            Showing {startIndex + 1}-{Math.min(endIndex, sortedCrops.length)} of {sortedCrops.length} crops
+            Showing {startIndex + 1}-{Math.min(endIndex, sortedCrops.length)} of{" "}
+            {sortedCrops.length} crops
           </div>
         )}
 
@@ -272,7 +287,8 @@ if (isError) {
                   No Crops Found
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  No crops in this category. Check back later or try another category.
+                  No crops in this category. Check back later or try another
+                  category.
                 </p>
               </div>
             </div>
@@ -293,7 +309,9 @@ if (isError) {
                     />
                     <div className="absolute top-3 right-3 flex items-center gap-1 px-3 py-1.5 rounded-full bg-green-500 text-white backdrop-blur-sm border-2 border-white shadow-lg">
                       <Package className="w-4 h-4" />
-                      <span className="text-xs font-bold">{crop.available}kg</span>
+                      <span className="text-xs font-bold">
+                        {crop.available}kg
+                      </span>
                     </div>
                   </div>
                 )}
@@ -311,7 +329,9 @@ if (isError) {
                   {/* Price Tag */}
                   <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg p-3 mb-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600 dark:text-gray-400">Price per kg</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        Price per kg
+                      </span>
                       <div className="flex items-center gap-1">
                         <span className="text-2xl font-bold text-green-600 dark:text-green-400">
                           ₹{crop.price.toFixed(2)}
@@ -337,10 +357,10 @@ if (isError) {
                       <span className="line-clamp-1">{crop.location}</span>
                     </div>
 
-                    {crop.farmer && (
+                    {crop.reportedBy && (
                       <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
                         <User className="w-4 h-4 mr-2 text-green-500 dark:text-green-400" />
-                        <span>By {crop.farmer.name}</span>
+                        <span>Owner : {crop.reportedBy.name}</span>
                       </div>
                     )}
                   </div>
@@ -363,8 +383,6 @@ if (isError) {
             ))
           )}
         </div>
-
-        
 
         {/* Pagination Controls */}
         {totalPages > 1 && (
