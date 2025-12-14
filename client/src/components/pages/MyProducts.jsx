@@ -12,6 +12,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useGetAllUserCropQuery } from "@/features/api/cropApi";
+import { useNavigate } from "react-router-dom";
 
 const ITEMS_PER_PAGE = 9;
 
@@ -43,10 +44,10 @@ const MyProducts = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleEdit = (crop) => {
-    // Add your edit logic here
-    console.log("Edit crop:", crop);
-    alert(`Edit functionality for ${crop.name}`);
+  const navigate = useNavigate();
+  const handleEdit = (cropId) => {
+    // alert(`cropId is : ,${cropId}`);
+    navigate(`/updateCrop/${cropId}`)
   };
 
   const handleDelete = (cropId, cropName) => {
@@ -243,7 +244,7 @@ const MyProducts = () => {
                   {/* Action Buttons */}
                   <div className="flex gap-2 pt-4 border-t border-gray-100 dark:border-gray-700">
                     <button
-                      onClick={() => handleEdit(crop)}
+                      onClick={() => handleEdit(crop._id)}
                       className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2"
                     >
                       <Edit className="w-4 h-4" />

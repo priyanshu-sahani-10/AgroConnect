@@ -9,8 +9,7 @@ export const cropApi = createApi({
     credentials: "include",
   }),
 
-  tagTypes: ["Crop", "UserCrop", "AllCrop"],
-
+  tagTypes: ["UserCrop", "AllCrop"],
 
   endpoints: (builder) => ({
     // 1. Register crop API
@@ -20,33 +19,57 @@ export const cropApi = createApi({
         method: "POST",
         body: inputData,
       }),
+      invalidatesTags: ["UserCrop", "AllCrop"],
     }),
 
     //2. Get All crops API
-    getAllCrop:builder.query({
-      query:()=>({
-        url:"getCrops",
-        method:"GET",
+    getAllCrop: builder.query({
+      query: () => ({
+        url: "getCrops",
+        method: "GET",
         credentials: "include",
       }),
-      providesTags:["AllCrop"]
+       providesTags: ["AllCrop"],
     }),
 
-
     //3.Get All user Crops Api
-    getAllUserCrop:builder.query({
-      query:()=>({
-        url:"userCrops",
-        method:"GET",
-        credentials:"include"
+    getAllUserCrop: builder.query({
+      query: () => ({
+        url: "userCrops",
+        method: "GET",
+        credentials: "include",
       }),
-      providesTags:["Crop","UserCrop"]
-    })
+      providesTags: ["UserCrop"],
+    }),
 
+    //4.Update user crop data API
 
+    updateUserCrop: builder.mutation({
+      query: ({ cropId, formData }) => ({
+        url: `updateCrop/${cropId}`,
+        method: "PUT",
+        credentials: "include",
+        body: formData,
+      }),
+      invalidatesTags: ["UserCrop", "AllCrop"],
+    }),
 
+    // 5. Get signle Crop Info API
 
+    getSingleCrop: builder.query({
+      query: ({ cropId }) => ({
+        url: `getCrop/${cropId}`,
+        method: "GET",
+        credentials: "include",
+      }),
+    }),
   }),
 });
 
-export const { useRegisterCropMutation , useGetAllCropQuery, useGetAllUserCropQuery} = cropApi;
+export const {
+  useRegisterCropMutation,
+  useGetAllCropQuery,
+  useGetAllUserCropQuery,
+  useUpdateUserCropMutation,
+  useGetSingleCropQuery,
+} = cropApi;

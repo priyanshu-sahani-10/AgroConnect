@@ -1,3 +1,4 @@
+import { log } from "console";
 import Crop from "../models/crop.model.js";
 import User from "../models/user.model.js";
 import cloudinary from "../utils/cloudinary.js";
@@ -40,8 +41,8 @@ export const RegisterCrop = async (req, res) => {
     }
     const { userId } = req.auth();
     const mongoUser = await User.findOne({ clerkId: userId });
-    // console.log("UserId for register crop : ",userId);    
-    // console.log("MongoUser for register crop : ",mongoUser);    
+    // console.log("UserId for register crop : ",userId);
+    // console.log("MongoUser for register crop : ",mongoUser);
     const newCrop = await Crop.create({
       name,
       description,
@@ -51,13 +52,13 @@ export const RegisterCrop = async (req, res) => {
       price,
       location,
       category,
-      reportedBy:mongoUser._id,
+      reportedBy: mongoUser._id,
     });
     return res.status(201).json({
-        success:true,
-        message:"Crop Details register successfully",
-        data:newCrop
-    })
+      success: true,
+      message: "Crop Details register successfully",
+      data: newCrop,
+    });
   } catch (error) {
     console.error("❌ Crop Details uploading  failed:", error);
     return res.status(500).json({
@@ -66,7 +67,6 @@ export const RegisterCrop = async (req, res) => {
     });
   }
 };
-
 
 export const getAllCrops = async (req, res) => {
   try {
@@ -94,9 +94,6 @@ export const getAllCrops = async (req, res) => {
     });
   }
 };
-
-
-
 
 export const getUserCrops = async (req, res) => {
   try {
@@ -131,4 +128,79 @@ export const getUserCrops = async (req, res) => {
   }
 };
 
+export const updateUserCrop = async (req, res) => {
+  try {
+    const { cropId } = req.params;
+    // console.log("cropId in updateUserCrop controller : ", cropId);
+    const crop = await Crop.findById(cropId);
+    if (!crop) {
+      return res.status(404).json({
+        success: false,
+        message: "These crop is not found",
+      });
+    }
+    const {
+      name,
+      category,
+      productionYear,
+      description,
+      price,
+      location,
+      available,
+    } = req.body;
 
+    if (name) crop.name = name;
+    if (category) crop.category = category;
+    if (productionYear) crop.productionYear = productionYear;
+    if (description) crop.description = description;
+    if (price) crop.price = price;
+    if (location) crop.location = location;
+    if (available) crop.available = available;
+
+    if (req.file?.path) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "issues",
+        resource_type: "auto",
+      });
+      crop.imageUrl = result.secure_url;
+    }
+    await crop.save();
+    return res.status(200).json({
+      success: true,
+      data: crop,
+      message: "Crop updated successfully",
+    });
+  } catch (error) {
+    console.log("Error in updating crop : ", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error in updating crop",
+    });
+  }
+};
+
+export const getSingleCrop = async (req, res) => {
+  try {
+    const { cropId } = req.params;
+      // console.log("cropId in getSingleCrop controller : ", cropId);
+    const crop = await Crop.findById(cropId);
+    if (!crop) {
+      return res.status(404).json({
+        success: false,
+        message: "These crop is not found",
+      });
+    } else {
+      return res.status(200).json({
+        success: true,
+        data: crop,
+        message: "Crop Detail get successfully",
+      });
+    }
+  } catch (error) {
+    console.log("Error in finding crop : ", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error in finding crop",
+    });
+  }
+};

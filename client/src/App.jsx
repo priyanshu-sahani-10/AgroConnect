@@ -12,6 +12,7 @@ import Chats from './components/pages/Chats';
 import RegisterCrop from './components/pages/RegisterCrop';
 import Profile from './components/pages/Profile';
 import EditProfile from './components/pages/EditProfile';
+import UpdateUserCrop from './components/pages/UpdateUserCrop';
 export default function App() {
   return (
     <>
@@ -28,6 +29,7 @@ export default function App() {
         <Route path="register-crop" element={<RegisterCrop/>}/>
         <Route path="profile" element={<Profile/>}/>
         <Route path="edit-profile" element={<EditProfile/>}/>
+        <Route path="updateCrop/:cropId" element={<UpdateUserCrop/>}/>
 
         <Route/>
       </Route>
