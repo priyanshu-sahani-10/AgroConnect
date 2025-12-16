@@ -182,7 +182,7 @@ export const updateUserCrop = async (req, res) => {
 export const getSingleCrop = async (req, res) => {
   try {
     const { cropId } = req.params;
-      // console.log("cropId in getSingleCrop controller : ", cropId);
+    // console.log("cropId in getSingleCrop controller : ", cropId);
     const crop = await Crop.findById(cropId);
     if (!crop) {
       return res.status(404).json({
@@ -202,5 +202,44 @@ export const getSingleCrop = async (req, res) => {
       success: false,
       message: "Server error in finding crop",
     });
+  }
+};
+
+export const deleteCrop = async (req, res) => {
+  try {
+    const { cropId } = req.params;
+    const crop = await Crop.findById(cropId);
+
+    if (!crop) {
+      return res
+        .status(404)
+        .json({ success: false, message: "crop not found" });
+    }
+
+    const {userId}=req.auth();    
+    const mongoUser=await User.findOne({clerkId:userId});
+    if(!mongoUser){
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to delete this crop",
+      });
+    }
+    // console.log("USer to delete the crop : ",mongoUser._id);
+    if (crop.reportedBy.toString() !== mongoUser._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to delete this crop",
+      });
+    }
+
+    await crop.deleteOne();
+    res
+      .status(200)
+      .json({ success: true, message: "Crop deleted successfully" });
+  } catch (err) {
+    console.error("Delete Crop Error:", err);
+    res
+      .status(500)
+      .json({ success: false, message: "Server error deleting crop" });
   }
 };

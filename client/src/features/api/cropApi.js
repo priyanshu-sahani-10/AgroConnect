@@ -63,6 +63,18 @@ export const cropApi = createApi({
         credentials: "include",
       }),
     }),
+
+
+    //6. Delete User Crop API
+    deleteUserCrop:builder.mutation({
+      query:({cropId})=>({
+        url:`deleteCrop/${cropId}`,
+        method:"DELETE",
+        credentials:"include"
+      }),
+      invalidatesTags: ["UserCrop", "AllCrop"],
+    })
+
   }),
 });
 
@@ -72,4 +84,5 @@ export const {
   useGetAllUserCropQuery,
   useUpdateUserCropMutation,
   useGetSingleCropQuery,
+  useDeleteUserCropMutation
 } = cropApi;
