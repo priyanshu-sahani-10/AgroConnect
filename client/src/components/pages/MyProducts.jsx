@@ -11,13 +11,17 @@ import {
   ChevronRight,
   TrendingUp,
 } from "lucide-react";
-import { useGetAllUserCropQuery } from "@/features/api/cropApi";
+import {
+  useDeleteUserCropMutation,
+  useGetAllUserCropQuery,
+} from "@/features/api/cropApi";
 import { useNavigate } from "react-router-dom";
 
 const ITEMS_PER_PAGE = 9;
 
 const MyProducts = () => {
   const { data, isLoading, isSuccess, isError } = useGetAllUserCropQuery();
+  const [deleteUserCrop, {isLoading:isDeleting}] = useDeleteUserCropMutation();
   const [selectedCrop, setSelectedCrop] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -36,7 +40,7 @@ const MyProducts = () => {
 
   // Calculate potential earnings from remaining stock
   const potentialEarnings = crops.reduce((sum, crop) => {
-    return sum + (crop.price * crop.available);
+    return sum + crop.price * crop.available;
   }, 0);
 
   const handlePageChange = (page) => {
@@ -47,18 +51,21 @@ const MyProducts = () => {
   const navigate = useNavigate();
   const handleEdit = (cropId) => {
     // alert(`cropId is : ,${cropId}`);
-    navigate(`/updateCrop/${cropId}`)
+    navigate(`/updateCrop/${cropId}`);
   };
 
-  const handleDelete = (cropId, cropName) => {
+  const handleDelete = async (cropId, cropName) => {
     // Add your delete logic here
-    const confirmDelete = window.confirm(
-      `Are you sure you want to delete "${cropName}"?`
-    );
-    if (confirmDelete) {
+    if (!window.confirm("Are you sure you want to delete this issue?")) return;
+    try {
       console.log("Delete crop:", cropId);
-      alert(`Delete functionality for ${cropName}`);
-      // Call your delete API here
+      const res = await deleteUserCrop({ cropId }).unwrap();
+      console.log("Delete crop res : ", res);
+      if (res.success) {
+        alert(res.message);
+      }
+    } catch (error) {
+      alert(err?.data?.message || "Failed to delete crop");
     }
   };
 
@@ -176,19 +183,19 @@ const MyProducts = () => {
             </div>
           </div>
         ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
+          <div className=" grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
             {currentCrops.map((crop) => (
               <div
                 key={crop._id}
-                className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-transparent dark:border-gray-700"
+                className=" group bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-transparent dark:border-gray-700"
               >
                 {/* Image */}
                 {crop.imageUrl && (
-                  <div className="relative h-48 overflow-hidden">
+                  <div className=" relative h-48 overflow-hidden">
                     <img
                       src={crop.imageUrl}
                       alt={crop.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute top-3 right-3 flex items-center gap-1 px-3 py-1.5 rounded-full bg-green-500 text-white backdrop-blur-sm border-2 border-white shadow-lg">
                       <Package className="w-4 h-4" />
@@ -252,6 +259,7 @@ const MyProducts = () => {
                     </button>
                     <button
                       onClick={() => handleDelete(crop._id, crop.name)}
+                      disabled={isDeleting}
                       className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 text-white rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2"
                     >
                       <Trash2 className="w-4 h-4" />
