@@ -11,6 +11,7 @@ import {
   User,
 } from "lucide-react";
 import { useGetAllCropQuery } from "@/features/api/cropApi.js";
+import { useNavigate } from "react-router-dom";
 
 // Mock data - replace with your actual API data
 const mockCrops = [
@@ -177,7 +178,7 @@ const Marketplace = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCrop, setSelectedCrop] = useState(null);
-
+  const navigate=useNavigate();
   // Simulate API data
   const { data, isError, isLoading } = useGetAllCropQuery();
   // console.log("backend crops : ", data);
@@ -210,7 +211,10 @@ const Marketplace = () => {
   };
 
   const handleCropClick = (crop) => {
-    setSelectedCrop(crop);
+    setSelectedCrop(crop._id);
+    // console.log("selectedCrop : ",);
+    // console.log("selectedCrop : ",selectedCrop);
+    navigate(`/marketplace/${crop._id}`);
   };
 
   const handleAddToCart = (cropId) => {
