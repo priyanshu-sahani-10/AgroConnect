@@ -9,157 +9,11 @@ import {
   ChevronRight,
   ShoppingCart,
   User,
+  Zap,
 } from "lucide-react";
 import { useGetAllCropQuery } from "@/features/api/cropApi.js";
 import { useNavigate } from "react-router-dom";
-
-// Mock data - replace with your actual API data
-const mockCrops = [
-  {
-    _id: "1",
-    name: "Organic Wheat",
-    category: "Cereals",
-    productionYear: "2024",
-    description:
-      "Premium quality organic wheat grown without pesticides. Perfect for making flour and bread.",
-    price: 45.5,
-    location: "Mumbai, Maharashtra",
-    available: 500,
-    imageUrl:
-      "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=800",
-    farmer: { name: "Rajesh Kumar", _id: "f1" },
-    createdAt: "2024-12-01",
-  },
-  {
-    _id: "2",
-    name: "Basmati Rice",
-    category: "Grains",
-    productionYear: "2024",
-    description:
-      "Aromatic long-grain basmati rice, aged for perfect cooking quality.",
-    price: 85.0,
-    location: "Punjab",
-    available: 1000,
-    imageUrl:
-      "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800",
-    farmer: { name: "Simran Singh", _id: "f2" },
-    createdAt: "2024-11-28",
-  },
-  {
-    _id: "3",
-    name: "Masoor Dal",
-    category: "Pulses",
-    productionYear: "2024",
-    description: "High-protein red lentils, perfectly cleaned and sorted.",
-    price: 92.0,
-    location: "Madhya Pradesh",
-    available: 300,
-    imageUrl:
-      "https://images.unsplash.com/photo-1596040033229-a0b67219daf0?w=800",
-    farmer: { name: "Amit Patel", _id: "f3" },
-    createdAt: "2024-11-25",
-  },
-  {
-    _id: "4",
-    name: "Fresh Tomatoes",
-    category: "Vegetables",
-    productionYear: "2024",
-    description:
-      "Farm-fresh red tomatoes, rich in vitamins and perfect for cooking.",
-    price: 35.0,
-    location: "Karnataka",
-    available: 200,
-    imageUrl:
-      "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=800",
-    farmer: { name: "Lakshmi Reddy", _id: "f4" },
-    createdAt: "2024-12-10",
-  },
-  {
-    _id: "5",
-    name: "Alphonso Mangoes",
-    category: "Fruits",
-    productionYear: "2024",
-    description:
-      "The king of mangoes - sweet, juicy Alphonso mangoes from Ratnagiri.",
-    price: 250.0,
-    location: "Ratnagiri, Maharashtra",
-    available: 150,
-    imageUrl: "https://images.unsplash.com/photo-1553279768-865429fa0078?w=800",
-    farmer: { name: "Pradeep Naik", _id: "f5" },
-    createdAt: "2024-12-08",
-  },
-  {
-    _id: "6",
-    name: "Turmeric Powder",
-    category: "Spices",
-    productionYear: "2023",
-    description:
-      "Pure turmeric powder with high curcumin content, naturally grown.",
-    price: 180.0,
-    location: "Andhra Pradesh",
-    available: 100,
-    imageUrl:
-      "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=800",
-    farmer: { name: "Venkat Rao", _id: "f6" },
-    createdAt: "2024-12-05",
-  },
-  {
-    _id: "7",
-    name: "Green Peas",
-    category: "Vegetables",
-    productionYear: "2024",
-    description:
-      "Fresh green peas, harvested at peak ripeness for maximum sweetness.",
-    price: 60.0,
-    location: "Uttar Pradesh",
-    available: 250,
-    imageUrl:
-      "https://images.unsplash.com/photo-1587735243615-c03f25aaff15?w=800",
-    farmer: { name: "Mohan Verma", _id: "f7" },
-    createdAt: "2024-12-11",
-  },
-  {
-    _id: "8",
-    name: "Red Chili",
-    category: "Spices",
-    productionYear: "2024",
-    description: "Spicy red chilies with vibrant color and intense flavor.",
-    price: 220.0,
-    location: "Andhra Pradesh",
-    available: 80,
-    imageUrl:
-      "https://images.unsplash.com/photo-1583032015627-7a5c8b6d6c3e?w=800",
-    farmer: { name: "Ravi Kumar", _id: "f8" },
-    createdAt: "2024-12-09",
-  },
-  {
-    _id: "9",
-    name: "Chickpeas",
-    category: "Pulses",
-    productionYear: "2024",
-    description: "Premium kabuli chana, perfect for curries and salads.",
-    price: 95.0,
-    location: "Rajasthan",
-    available: 400,
-    imageUrl:
-      "https://images.unsplash.com/photo-1610415946035-bad6fc9b5b6e?w=800",
-    farmer: { name: "Sunita Sharma", _id: "f9" },
-    createdAt: "2024-12-07",
-  },
-  {
-    _id: "10",
-    name: "Green Apples",
-    category: "Fruits",
-    productionYear: "2024",
-    description: "Crisp and tangy green apples from the hills.",
-    price: 150.0,
-    location: "Himachal Pradesh",
-    available: 180,
-    imageUrl: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=800",
-    farmer: { name: "Anil Thakur", _id: "f10" },
-    createdAt: "2024-12-06",
-  },
-];
+import BuyNowModal from "./BuyNowModel";
 
 const categories = [
   "All",
@@ -178,10 +32,11 @@ const Marketplace = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCrop, setSelectedCrop] = useState(null);
-  const navigate=useNavigate();
-  // Simulate API data
+  const [isBuyNowOpen, setIsBuyNowOpen] = useState(false);
+  const [selectedBuyCrop, setSelectedBuyCrop] = useState(null);
+  const navigate = useNavigate();
+
   const { data, isError, isLoading } = useGetAllCropQuery();
-  // console.log("backend crops : ", data);
 
   const crops = data?.data || [];
 
@@ -194,7 +49,6 @@ const Marketplace = () => {
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
 
-  // Pagination calculations
   const totalPages = Math.ceil(sortedCrops.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
@@ -212,13 +66,16 @@ const Marketplace = () => {
 
   const handleCropClick = (crop) => {
     setSelectedCrop(crop._id);
-    // console.log("selectedCrop : ",);
-    // console.log("selectedCrop : ",selectedCrop);
     navigate(`/marketplace/${crop._id}`);
   };
 
   const handleAddToCart = (cropId) => {
     alert(`Crop ${cropId} added to cart!`);
+  };
+
+  const handleBuyNow = (crop) => {
+    setSelectedBuyCrop(crop);
+    setIsBuyNowOpen(true);
   };
 
   if (isLoading) {
@@ -369,17 +226,27 @@ const Marketplace = () => {
                     )}
                   </div>
 
-                  {/* Action Button */}
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
+                  {/* Action Buttons */}
+                  <div className="flex items-center gap-2 pt-4 border-t border-gray-100 dark:border-gray-700">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleAddToCart(crop._id);
                       }}
-                      className="flex-1 px-4 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 shadow-md"
+                      className="flex-1 px-3 py-2.5 bg-white dark:bg-gray-700 border-2 border-green-600 dark:border-green-500 text-green-600 dark:text-green-400 rounded-lg font-medium text-sm hover:bg-green-50 dark:hover:bg-gray-600 transition-all duration-200 flex items-center justify-center gap-2"
                     >
                       <ShoppingCart className="w-4 h-4" />
                       Add to Cart
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleBuyNow(crop);
+                      }}
+                      className="flex-1 px-3 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 shadow-md"
+                    >
+                      <Zap className="w-4 h-4" />
+                      Buy Now
                     </button>
                   </div>
                 </div>
@@ -447,6 +314,11 @@ const Marketplace = () => {
             </button>
           </div>
         )}
+        <BuyNowModal
+          isOpen={isBuyNowOpen}
+          onClose={() => setIsBuyNowOpen(false)}
+          crop={selectedBuyCrop}
+        />
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 export default function Profile() {
   // Sample user data - replace with actual data from your backend
   const userData = useSelector((state)=> state.auth.user);
-  console.log("User in profile.jsx : ", userData);
+  // console.log("User in profile.jsx : ", userData);
   
 
   const formatCurrency = (amount) => {

@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { 
-  ArrowLeft, 
-  Package, 
-  Wheat, 
-  Calendar, 
-  MapPin, 
-  User, 
-  ShoppingCart, 
+import React, { useState } from "react";
+import {
+  ArrowLeft,
+  Package,
+  Wheat,
+  Calendar,
+  MapPin,
+  User,
+  ShoppingCart,
   Zap,
   MessageCircle,
   X,
@@ -15,53 +15,57 @@ import {
   Mail,
   Star,
   Shield,
-  TrendingUp
-} from 'lucide-react';
+  TrendingUp,
+} from "lucide-react";
 
+import BuyNowModal from "./BuyNowModel";
 const SingleCrop = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
+  const [isBuyNowOpen, setIsBuyNowOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState([
     {
       id: 1,
-      sender: 'owner',
-      text: 'Hello! Thank you for your interest in my crops. How can I help you?',
-      time: '10:30 AM'
-    }
+      sender: "owner",
+      text: "Hello! Thank you for your interest in my crops. How can I help you?",
+      time: "10:30 AM",
+    },
   ]);
 
   // Sample crop data - replace with actual data from props/route
   const crop = {
-    _id: '1',
-    name: 'Premium Basmati Rice',
-    description: 'High-quality organic basmati rice, aged for 2 years to ensure perfect aroma and long grains. Grown using traditional farming methods without any chemical pesticides or fertilizers.',
-    price: 85.50,
+    _id: "1",
+    name: "Premium Basmati Rice",
+    description:
+      "High-quality organic basmati rice, aged for 2 years to ensure perfect aroma and long grains. Grown using traditional farming methods without any chemical pesticides or fertilizers.",
+    price: 85.5,
     available: 500,
-    category: 'Grains',
-    productionYear: '2024',
-    location: 'Punjab, India',
-    imageUrl: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800',
+    category: "Grains",
+    productionYear: "2024",
+    location: "Punjab, India",
+    imageUrl:
+      "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800",
     reportedBy: {
-      name: 'Rajesh Kumar',
-      phone: '+91 98765 43210',
-      email: 'rajesh.kumar@farmconnect.com',
+      name: "Rajesh Kumar",
+      phone: "+91 98765 43210",
+      email: "rajesh.kumar@farmconnect.com",
       rating: 4.8,
-      totalSales: 250
+      totalSales: 250,
     },
     specifications: {
-      'Grain Length': '8-9 mm',
-      'Moisture Content': '12-13%',
-      'Purity': '99.5%',
-      'Broken Grains': '< 1%',
-      'Organic Certified': 'Yes'
+      "Grain Length": "8-9 mm",
+      "Moisture Content": "12-13%",
+      Purity: "99.5%",
+      "Broken Grains": "< 1%",
+      "Organic Certified": "Yes",
     },
     benefits: [
-      'Aged for perfect aroma and taste',
-      'Certified organic by India Organic',
-      'Non-GMO verified',
-      'Low glycemic index',
-      'Rich in essential nutrients'
-    ]
+      "Aged for perfect aroma and taste",
+      "Certified organic by India Organic",
+      "Non-GMO verified",
+      "Low glycemic index",
+      "Rich in essential nutrients",
+    ],
   };
 
   const handleSendMessage = () => {
@@ -70,34 +74,40 @@ const SingleCrop = () => {
         ...chatMessages,
         {
           id: chatMessages.length + 1,
-          sender: 'buyer',
+          sender: "buyer",
           text: message,
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        }
+          time: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        },
       ]);
-      setMessage('');
-      
+      setMessage("");
+
       // Simulate owner response after 2 seconds
       setTimeout(() => {
-        setChatMessages(prev => [
+        setChatMessages((prev) => [
           ...prev,
           {
             id: prev.length + 1,
-            sender: 'owner',
-            text: 'Thank you for your message! I will get back to you shortly.',
-            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-          }
+            sender: "owner",
+            text: "Thank you for your message! I will get back to you shortly.",
+            time: new Date().toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+          },
         ]);
       }, 2000);
     }
   };
 
   const handleAddToCart = () => {
-    alert('Added to cart successfully!');
+    alert("Added to cart successfully!");
   };
-
   const handleBuyNow = () => {
-    alert('Proceeding to checkout...');
+    // alert("Proceeding to checkout...");
+    setIsBuyNowOpen(true);
   };
 
   return (
@@ -124,23 +134,33 @@ const SingleCrop = () => {
               />
               <div className="absolute top-4 right-4 flex items-center gap-2 px-4 py-2 rounded-full bg-green-500 text-white backdrop-blur-sm border-2 border-white shadow-lg">
                 <Package className="w-5 h-5" />
-                <span className="text-sm font-bold">{crop.available}kg Available</span>
+                <span className="text-sm font-bold">
+                  {crop.available}kg Available
+                </span>
               </div>
             </div>
 
             {/* Owner Card */}
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
-              <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Seller Information</h3>
+              <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">
+                Seller Information
+              </h3>
               <div className="flex items-start gap-4">
                 <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
                   {crop.reportedBy.name.charAt(0)}
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-lg font-bold text-gray-800 dark:text-gray-100">{crop.reportedBy.name}</h4>
+                  <h4 className="text-lg font-bold text-gray-800 dark:text-gray-100">
+                    {crop.reportedBy.name}
+                  </h4>
                   <div className="flex items-center gap-1 mb-2">
                     <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">{crop.reportedBy.rating}</span>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">({crop.reportedBy.totalSales} sales)</span>
+                    <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                      {crop.reportedBy.rating}
+                    </span>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                      ({crop.reportedBy.totalSales} sales)
+                    </span>
                   </div>
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
@@ -168,53 +188,71 @@ const SingleCrop = () => {
           <div className="space-y-6">
             {/* Title and Price */}
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
-              <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-3">{crop.name}</h1>
-              
+              <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-3">
+                {crop.name}
+              </h1>
+
               <div className="flex items-end gap-3 mb-4">
                 <div className="text-4xl font-bold text-green-600 dark:text-green-400">
                   ₹{crop.price.toFixed(2)}
                 </div>
-                <div className="text-lg text-gray-500 dark:text-gray-400 pb-1">per kg</div>
+                <div className="text-lg text-gray-500 dark:text-gray-400 pb-1">
+                  per kg
+                </div>
               </div>
 
               <div className="flex items-center gap-4 mb-4">
                 <div className="flex items-center gap-2 px-3 py-1 bg-green-100 dark:bg-green-900/30 rounded-full">
                   <Shield className="w-4 h-4 text-green-600 dark:text-green-400" />
-                  <span className="text-sm font-medium text-green-700 dark:text-green-300">Certified Organic</span>
+                  <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                    Certified Organic
+                  </span>
                 </div>
                 <div className="flex items-center gap-2 px-3 py-1 bg-blue-100 dark:bg-blue-900/30 rounded-full">
                   <TrendingUp className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                  <span className="text-sm font-medium text-blue-700 dark:text-blue-300">High Demand</span>
+                  <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                    High Demand
+                  </span>
                 </div>
               </div>
 
-              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">{crop.description}</p>
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                {crop.description}
+              </p>
             </div>
 
             {/* Meta Information */}
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
-              <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Product Details</h3>
+              <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">
+                Product Details
+              </h3>
               <div className="space-y-3">
                 <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-700">
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                     <Wheat className="w-5 h-5 text-green-500" />
                     <span className="font-medium">Category</span>
                   </div>
-                  <span className="text-gray-800 dark:text-gray-100 font-semibold">{crop.category}</span>
+                  <span className="text-gray-800 dark:text-gray-100 font-semibold">
+                    {crop.category}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-700">
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                     <Calendar className="w-5 h-5 text-green-500" />
                     <span className="font-medium">Production Year</span>
                   </div>
-                  <span className="text-gray-800 dark:text-gray-100 font-semibold">{crop.productionYear}</span>
+                  <span className="text-gray-800 dark:text-gray-100 font-semibold">
+                    {crop.productionYear}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between py-2">
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                     <MapPin className="w-5 h-5 text-green-500" />
                     <span className="font-medium">Location</span>
                   </div>
-                  <span className="text-gray-800 dark:text-gray-100 font-semibold">{crop.location}</span>
+                  <span className="text-gray-800 dark:text-gray-100 font-semibold">
+                    {crop.location}
+                  </span>
                 </div>
               </div>
             </div>
@@ -281,8 +319,12 @@ const SingleCrop = () => {
                   {crop.reportedBy.name.charAt(0)}
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-800 dark:text-gray-100">{crop.reportedBy.name}</h3>
-                  <p className="text-xs text-green-600 dark:text-green-400">Online</p>
+                  <h3 className="font-bold text-gray-800 dark:text-gray-100">
+                    {crop.reportedBy.name}
+                  </h3>
+                  <p className="text-xs text-green-600 dark:text-green-400">
+                    Online
+                  </p>
                 </div>
               </div>
               <button
@@ -298,19 +340,25 @@ const SingleCrop = () => {
               {chatMessages.map((msg) => (
                 <div
                   key={msg.id}
-                  className={`flex ${msg.sender === 'buyer' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex ${
+                    msg.sender === "buyer" ? "justify-end" : "justify-start"
+                  }`}
                 >
                   <div
                     className={`max-w-xs px-4 py-2 rounded-2xl ${
-                      msg.sender === 'buyer'
-                        ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100'
+                      msg.sender === "buyer"
+                        ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white"
+                        : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100"
                     }`}
                   >
                     <p className="text-sm">{msg.text}</p>
-                    <p className={`text-xs mt-1 ${
-                      msg.sender === 'buyer' ? 'text-green-100' : 'text-gray-500 dark:text-gray-400'
-                    }`}>
+                    <p
+                      className={`text-xs mt-1 ${
+                        msg.sender === "buyer"
+                          ? "text-green-100"
+                          : "text-gray-500 dark:text-gray-400"
+                      }`}
+                    >
                       {msg.time}
                     </p>
                   </div>
@@ -325,7 +373,7 @@ const SingleCrop = () => {
                   type="text"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                  onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
                   placeholder="Type your message..."
                   className="flex-1 px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded-full border-none focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
@@ -340,6 +388,11 @@ const SingleCrop = () => {
           </div>
         </div>
       )}
+      <BuyNowModal
+        isOpen={isBuyNowOpen}
+        onClose={() => setIsBuyNowOpen(false)}
+        crop={crop}
+      />
     </div>
   );
 };
