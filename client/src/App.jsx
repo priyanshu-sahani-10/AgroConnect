@@ -13,6 +13,8 @@ import RegisterCrop from './components/pages/RegisterCrop';
 import Profile from './components/pages/Profile';
 import EditProfile from './components/pages/EditProfile';
 import UpdateUserCrop from './components/pages/UpdateUserCrop';
+import MyOrders from './components/pages/MyOrders';
+import SingleCrop from './components/pages/SingleCrop';
 export default function App() {
   return (
     <>
@@ -23,6 +25,7 @@ export default function App() {
         <Route path="sign-up" element={<SignUp/>}/>
         <Route path="create-account" element={<Account/>}/>
         <Route path="marketplace" element={<Marketplace/>}/>
+        <Route path="marketplace/:cropId" element={<SingleCrop/>}/>
         <Route path="my-products" element={<MyProducts/>}/>
         <Route path="orders" element={<Orders/>}/>
         <Route path="chat" element={<Chats/>}/>
@@ -30,6 +33,7 @@ export default function App() {
         <Route path="profile" element={<Profile/>}/>
         <Route path="edit-profile" element={<EditProfile/>}/>
         <Route path="updateCrop/:cropId" element={<UpdateUserCrop/>}/>
+        <Route path="my-orders" element={<MyOrders/>}/>
 
         <Route/>
       </Route>

@@ -1,20 +1,25 @@
 import { Button } from "@/components/ui/button";
 import React from "react";
 import { Sprout, Users, ShoppingCart, TrendingUp, ArrowRight, Package, MessageCircle, Shield } from "lucide-react";
+import { useSelector } from "react-redux";
 
 const Home = () => {
-  const isAuthenticated = true; // Replace with Redux selector
+  const user = useSelector((state)=>(state.auth.user)); // Replace with Redux selector
 
   const handleGetStarted = () => {
-    if (isAuthenticated) {
-      window.location.href = "/register-crop";
-    } else {
+    if (!user) {
       window.location.href = "/signup";
+    } else {
+      if(user.role==="farmer"){
+        window.location.href = "/register-crop";
+      }else{
+        window.location.href = "/my-orders";
+      }
     }
   };
 
   const handleExplore = () => {
-    if (isAuthenticated) {
+    if (user) {
       window.location.href = "/marketplace";
     } else {
       window.location.href = "/login";

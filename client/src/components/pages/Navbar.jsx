@@ -73,9 +73,9 @@ export default function Navbar() {
                   </Link>
 
                   {user.role === "farmer" && (
-                    <Link to="/my-products">
+                    <Link to="/register-crop">
                       <button className="flex items-center gap-2 px-6 py-2 bg-green-600 dark:bg-green-700 text-white rounded-lg hover:bg-green-700 dark:hover:bg-green-800 transition-colors shadow-md dark:shadow-green-900/50">
-                        <Package className="w-4 h-4" /> My Products
+                        <Package className="w-4 h-4" /> Register-Crop
                       </button>
                     </Link>
                   )}
