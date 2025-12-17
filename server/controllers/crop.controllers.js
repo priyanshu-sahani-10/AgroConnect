@@ -183,7 +183,7 @@ export const getSingleCrop = async (req, res) => {
   try {
     const { cropId } = req.params;
     // console.log("cropId in getSingleCrop controller : ", cropId);
-    const crop = await Crop.findById(cropId);
+    const crop = await Crop.findById(cropId).populate("reportedBy", "name email mobileNo");
     if (!crop) {
       return res.status(404).json({
         success: false,
@@ -216,9 +216,9 @@ export const deleteCrop = async (req, res) => {
         .json({ success: false, message: "crop not found" });
     }
 
-    const {userId}=req.auth();    
-    const mongoUser=await User.findOne({clerkId:userId});
-    if(!mongoUser){
+    const { userId } = req.auth();
+    const mongoUser = await User.findOne({ clerkId: userId });
+    if (!mongoUser) {
       return res.status(403).json({
         success: false,
         message: "You are not authorized to delete this crop",

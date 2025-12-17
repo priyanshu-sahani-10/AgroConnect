@@ -19,7 +19,10 @@ import {
 } from "lucide-react";
 
 import BuyNowModal from "./BuyNowModel";
+import {  useGetSingleCropQuery } from "@/features/api/cropApi";
+import { useNavigate, useParams } from "react-router-dom";
 const SingleCrop = () => {
+  const navigate = useNavigate();
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [isBuyNowOpen, setIsBuyNowOpen] = useState(false);
@@ -33,41 +36,11 @@ const SingleCrop = () => {
   ]);
 
   // Sample crop data - replace with actual data from props/route
-  const crop = {
-    _id: "1",
-    name: "Premium Basmati Rice",
-    description:
-      "High-quality organic basmati rice, aged for 2 years to ensure perfect aroma and long grains. Grown using traditional farming methods without any chemical pesticides or fertilizers.",
-    price: 85.5,
-    available: 500,
-    category: "Grains",
-    productionYear: "2024",
-    location: "Punjab, India",
-    imageUrl:
-      "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800",
-    reportedBy: {
-      name: "Rajesh Kumar",
-      phone: "+91 98765 43210",
-      email: "rajesh.kumar@farmconnect.com",
-      rating: 4.8,
-      totalSales: 250,
-    },
-    specifications: {
-      "Grain Length": "8-9 mm",
-      "Moisture Content": "12-13%",
-      Purity: "99.5%",
-      "Broken Grains": "< 1%",
-      "Organic Certified": "Yes",
-    },
-    benefits: [
-      "Aged for perfect aroma and taste",
-      "Certified organic by India Organic",
-      "Non-GMO verified",
-      "Low glycemic index",
-      "Rich in essential nutrients",
-    ],
-  };
-
+  const {cropId}=useParams();
+  const {data,isError,isLoading,isSuccess}  = useGetSingleCropQuery({cropId});
+  const crop = data?.data
+  // console.log("single crop data : ",crop);
+  
   const handleSendMessage = () => {
     if (message.trim()) {
       setChatMessages([
@@ -109,6 +82,45 @@ const SingleCrop = () => {
     // alert("Proceeding to checkout...");
     setIsBuyNowOpen(true);
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">Loading crop details...</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Please wait</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !crop) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-8">
+          <div className="w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+            <X className="w-10 h-10 text-red-600 dark:text-red-400" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-2">
+            Oops! Something went wrong
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            Failed to load crop details. Please try again later.
+          </p>
+          <button
+            onClick={() => navigate('/marketplace')}
+            className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-lg font-bold transition-all duration-200 shadow-md flex items-center justify-center gap-2 mx-auto"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            Back to Marketplace
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
@@ -165,7 +177,7 @@ const SingleCrop = () => {
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                       <Phone className="w-4 h-4 text-green-500" />
-                      <span>{crop.reportedBy.phone}</span>
+                      <span>+91 {crop.reportedBy.mobileNo}</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                       <Mail className="w-4 h-4 text-green-500" />
