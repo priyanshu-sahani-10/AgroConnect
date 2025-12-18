@@ -144,7 +144,7 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
                 </a>
 
                 {user.role === "buyer" && (
-                  <a href="/orders">
+                  <a href="/my-orders">
                     <button 
                       onClick={() => setDropdownOpen(false)}
                       className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-3 text-sm transition-colors text-gray-900 dark:text-gray-100"

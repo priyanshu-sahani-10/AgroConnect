@@ -241,3 +241,55 @@ export const verifyRazorpayPayment = async (req, res) => {
   }
 };
 
+
+
+
+
+
+
+
+export const getAllOrderDetails = async (req, res) => {
+  try {
+    // 1️⃣ Clerk user
+    const { userId } = req.auth();
+
+    // 2️⃣ Find Mongo user
+    const buyer = await User.findOne({ clerkId: userId });
+    if (!buyer) {
+      return res.status(403).json({
+        success: false,
+        message: "User not authorized",
+      });
+    }
+
+    // 3️⃣ Role check
+    if (buyer.role !== "buyer") {
+      return res.status(403).json({
+        success: false,
+        message: "Only buyers can access this resource",
+      });
+    }
+
+    // 4️⃣ Fetch PAID orders
+    const orders = await Order.find({
+      buyer: buyer._id,
+      // paymentStatus: "PAID",
+    })
+      .populate("crop", "name imageUrl")
+      .populate("farmer", "name mobileNo")
+      .sort({ createdAt: -1 }); // latest first
+
+    return res.status(200).json({
+      success: true,
+      totalOrders: orders.length,
+      orders,
+    });
+  } catch (error) {
+    console.error("Get buyer paid orders error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
