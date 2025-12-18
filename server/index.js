@@ -7,6 +7,7 @@ import cropRouter from './routes/crop.route.js';
 import { clerkMiddleware } from "@clerk/express";
 import userRouter from './routes/user.route.js';
 import orderRouter from './routes/order.route.js';
+import cartRouter from './routes/cart.route.js';
 
 dotenv.config();
 connectDB();
@@ -28,5 +29,6 @@ app.use(clerkMiddleware());
 app.use("/api/v1/crop", cropRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/order", orderRouter);
+app.use("/api/v1/cart", cartRouter);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

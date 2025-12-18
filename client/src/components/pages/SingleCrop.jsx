@@ -19,10 +19,14 @@ import {
 } from "lucide-react";
 
 import BuyNowModal from "./BuyNowModel";
-import {  useGetSingleCropQuery } from "@/features/api/cropApi";
+import { useGetSingleCropQuery } from "@/features/api/cropApi";
 import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addToCart } from "@/features/slice/cartSlice";
+import { useAddToCartMutation } from "@/features/api/cartApi";
 const SingleCrop = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [isBuyNowOpen, setIsBuyNowOpen] = useState(false);
@@ -36,11 +40,17 @@ const SingleCrop = () => {
   ]);
 
   // Sample crop data - replace with actual data from props/route
-  const {cropId}=useParams();
-  const {data,isError,isLoading,isSuccess}  = useGetSingleCropQuery({cropId});
-  const crop = data?.data
+  const { cropId } = useParams();
+  const { data, isError, isLoading } = useGetSingleCropQuery({ cropId });
+  const crop = data?.data;
   // console.log("single crop data : ",crop);
-  
+
+  //add cart items mututions
+  const [
+    addToCart,
+    { isError: cartItemAddError, isLoading: cartItemAddSuccess },
+  ] = useAddToCartMutation();
+
   const handleSendMessage = () => {
     if (message.trim()) {
       setChatMessages([
@@ -75,11 +85,16 @@ const SingleCrop = () => {
     }
   };
 
-  const handleAddToCart = () => {
-    alert("Added to cart successfully!");
+  const handleAddToCart = async () => {
+    try {
+      const res = await addToCart({ cropId }).unwrap();
+      const message = res.message;
+      alert(`${message}`);
+    } catch (error) {
+      console.log("error in additem to cart : ", error);
+    }
   };
   const handleBuyNow = () => {
-    // alert("Proceeding to checkout...");
     setIsBuyNowOpen(true);
   };
 
@@ -88,8 +103,12 @@ const SingleCrop = () => {
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">Loading crop details...</p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Please wait</p>
+          <p className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+            Loading crop details...
+          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+            Please wait
+          </p>
         </div>
       </div>
     );
@@ -109,7 +128,7 @@ const SingleCrop = () => {
             Failed to load crop details. Please try again later.
           </p>
           <button
-            onClick={() => navigate('/marketplace')}
+            onClick={() => navigate("/marketplace")}
             className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-lg font-bold transition-all duration-200 shadow-md flex items-center justify-center gap-2 mx-auto"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -120,14 +139,15 @@ const SingleCrop = () => {
     );
   }
 
-
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 mt-6">
       {/* Header */}
       <div className="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <button className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors">
+          <button
+            className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+            onClick={() => navigate("/marketplace")}
+          >
             <ArrowLeft className="w-5 h-5" />
             <span className="font-medium">Back to Marketplace</span>
           </button>
@@ -269,39 +289,12 @@ const SingleCrop = () => {
               </div>
             </div>
 
-            {/* Specifications */}
-            {/* <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
-              <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Specifications</h3>
-              <div className="grid grid-cols-2 gap-3">
-                {Object.entries(crop.specifications).map(([key, value]) => (
-                  <div key={key} className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
-                    <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">{key}</div>
-                    <div className="text-sm font-semibold text-gray-800 dark:text-gray-100">{value}</div>
-                  </div>
-                ))}
-              </div>
-            </div> */}
-
-            {/* Benefits */}
-            {/* <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg">
-              <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">Key Benefits</h3>
-              <ul className="space-y-2">
-                {crop.benefits.map((benefit, index) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <div className="w-5 h-5 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <div className="w-2 h-2 rounded-full bg-green-600 dark:bg-green-400"></div>
-                    </div>
-                    <span className="text-gray-600 dark:text-gray-300">{benefit}</span>
-                  </li>
-                ))}
-              </ul>
-            </div> */}
-
             {/* Action Buttons */}
             <div className="sticky bottom-0 bg-white dark:bg-gray-800 rounded-xl p-6 shadow-2xl border-t-4 border-green-500">
               <div className="grid grid-cols-2 gap-4">
                 <button
                   onClick={handleAddToCart}
+                  disabled={cartItemAddError}
                   className="px-6 py-3.5 bg-white dark:bg-gray-700 border-2 border-green-600 dark:border-green-500 text-green-600 dark:text-green-400 rounded-lg font-bold text-base hover:bg-green-50 dark:hover:bg-gray-600 transition-all duration-200 flex items-center justify-center gap-2 shadow-md"
                 >
                   <ShoppingCart className="w-5 h-5" />

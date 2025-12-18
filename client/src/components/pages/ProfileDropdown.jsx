@@ -7,7 +7,8 @@ import {
   ShoppingCart, 
   Package, 
   Mail,
-  IndianRupeeIcon
+  IndianRupeeIcon,
+  ShoppingBag
 } from "lucide-react";
 import { SignedIn, useClerk } from "@clerk/clerk-react";
 import { useSelector } from "react-redux";
@@ -148,11 +149,25 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
                       onClick={() => setDropdownOpen(false)}
                       className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-3 text-sm transition-colors text-gray-900 dark:text-gray-100"
                     >
-                      <ShoppingCart className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                      <ShoppingBag className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                       <span className="font-medium">My Orders</span>
                     </button>
                   </a>
-                )}
+                ) }
+
+                {user.role === "buyer" && (
+                  <a href="/cart-items">
+                    <button 
+                      onClick={() => setDropdownOpen(false)}
+                      className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-3 text-sm transition-colors text-gray-900 dark:text-gray-100"
+                    >
+                      <ShoppingCart className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                      <span className="font-medium">My Cart</span>
+                    </button>
+                  </a>
+                ) }
+
+
 
                 {user.role === "farmer" && (
                   <a href="/my-products">
