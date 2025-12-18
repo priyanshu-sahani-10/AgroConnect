@@ -227,6 +227,7 @@ export const verifyRazorpayPayment = async (req, res) => {
     await User.findByIdAndUpdate(order.farmer, {
       $inc: {
         totalEarning: order.totalAmount,
+        totalOrder: 1,
       },
     });
 

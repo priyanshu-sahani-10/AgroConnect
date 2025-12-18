@@ -107,7 +107,7 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
                           <Package className="w-4 h-4" />
                           <span className="text-xs font-medium">Total Sales</span>
                         </div>
-                        <p className="text-xl font-bold text-green-600 dark:text-green-400">{user.totalSales}</p>
+                        <p className="text-xl font-bold text-green-600 dark:text-green-400">{user.totalOrder}</p>
                       </div>
                       <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
                         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-1">

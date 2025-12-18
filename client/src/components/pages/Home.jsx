@@ -8,7 +8,7 @@ const Home = () => {
 
   const handleGetStarted = () => {
     if (!user) {
-      window.location.href = "/signup";
+      window.location.href = "/sign-up";
     } else {
       if(user.role==="farmer"){
         window.location.href = "/register-crop";
@@ -22,7 +22,7 @@ const Home = () => {
     if (user) {
       window.location.href = "/marketplace";
     } else {
-      window.location.href = "/login";
+      window.location.href = "/sign-in";
     }
   };
 
@@ -324,7 +324,6 @@ const Home = () => {
               size="lg"
               variant="secondary"
               className="text-lg px-8 py-6 bg-white dark:bg-gray-100 text-green-600 dark:text-green-700 hover:bg-gray-100 dark:hover:bg-gray-200"
-              onClick={handleGetStarted}
             >
               Join as Farmer
               <Sprout className="ml-2 w-5 h-5" />
@@ -332,7 +331,6 @@ const Home = () => {
             <Button
               size="lg"
               className="text-lg px-8 py-6 bg-green-700 dark:bg-green-800 hover:bg-green-800 dark:hover:bg-green-900 text-white"
-              onClick={handleGetStarted}
             >
               Join as Buyer
               <ShoppingCart className="ml-2 w-5 h-5" />
