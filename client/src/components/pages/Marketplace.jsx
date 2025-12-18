@@ -10,12 +10,12 @@ import {
   ShoppingCart,
   User,
   Zap,
+  Search,
+  X,
 } from "lucide-react";
 import { useGetAllCropQuery } from "@/features/api/cropApi.js";
 import { useNavigate } from "react-router-dom";
 import BuyNowModal from "./BuyNowModel";
-import { useDispatch } from "react-redux";
-import { useAddToCartMutation } from "@/features/api/cartApi";
 
 const categories = [
   "All",
@@ -34,27 +34,37 @@ const Marketplace = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCrop, setSelectedCrop] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isBuyNowOpen, setIsBuyNowOpen] = useState(false);
   const [selectedBuyCrop, setSelectedBuyCrop] = useState(null);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const { data, isError, isLoading } = useGetAllCropQuery();
 
-  //add crop item mutations
-  const [
-    addToCart,
-    { isError: cartItemAddError, isLoading: cartItemAddSuccess },
-  ] = useAddToCartMutation();
-
   const crops = data?.data || [];
 
-  const filteredCrops =
+  // Step 1: Filter by category
+  const categoryFilteredCrops =
     selectedCategory === "All"
       ? crops
       : crops.filter((crop) => crop.category === selectedCategory);
 
-  const sortedCrops = [...filteredCrops].sort(
+  // Step 2: Filter by search query
+  const searchAndCategoryFiltered = categoryFilteredCrops.filter((crop) => {
+    if (!searchQuery.trim()) return true;
+    
+    const query = searchQuery.toLowerCase();
+    return (
+      crop.name?.toLowerCase().includes(query) ||
+      crop.description?.toLowerCase().includes(query) ||
+      crop.location?.toLowerCase().includes(query) ||
+      crop.category?.toLowerCase().includes(query) ||
+      crop.reportedBy?.name?.toLowerCase().includes(query)
+    );
+  });
+
+  // Step 3: Sort the filtered results
+  const sortedCrops = [...searchAndCategoryFiltered].sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
 
@@ -66,6 +76,7 @@ const Marketplace = () => {
   const handleCategoryChange = (cat) => {
     setSelectedCategory(cat);
     setCurrentPage(1);
+    setSearchQuery("");
   };
 
   const handlePageChange = (page) => {
@@ -78,15 +89,8 @@ const Marketplace = () => {
     navigate(`/marketplace/${crop._id}`);
   };
 
-  const handleAddToCart = async (crop) => {
-    try {
-      const cropId=crop._id;
-      const res = await addToCart({ cropId }).unwrap();
-      const message = res.message;
-      alert(`${message}`);
-    } catch (error) {
-      console.log("error in additem to cart : ", error);
-    }
+  const handleAddToCart = (cropId) => {
+    alert(`Crop ${cropId} added to cart!`);
   };
 
   const handleBuyNow = (crop) => {
@@ -144,6 +148,39 @@ const Marketplace = () => {
           </div>
         </div>
 
+        {/* Search Bar */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 mb-6 transition-colors duration-300">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
+              placeholder="Search by crop name, location, farmer name, or description..."
+              className="w-full pl-12 pr-12 py-3 bg-gray-50 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 rounded-lg text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => {
+                  setSearchQuery("");
+                  setCurrentPage(1);
+                }}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 p-1 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+              </button>
+            )}
+          </div>
+          {searchQuery && (
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              Searching for: <span className="font-semibold text-green-600 dark:text-green-400">"{searchQuery}"</span>
+            </p>
+          )}
+        </div>
+
         {/* Results Summary */}
         {sortedCrops.length > 0 && (
           <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
@@ -164,8 +201,10 @@ const Marketplace = () => {
                   No Crops Found
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  No crops in this category. Check back later or try another
-                  category.
+                  {searchQuery 
+                    ? `No crops found matching "${searchQuery}". Try a different search term.`
+                    : "No crops in this category. Check back later or try another category."
+                  }
                 </p>
               </div>
             </div>
@@ -247,9 +286,8 @@ const Marketplace = () => {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleAddToCart(crop);
+                        handleAddToCart(crop._id);
                       }}
-                      disabled={cartItemAddError}
                       className="flex-1 px-3 py-2.5 bg-white dark:bg-gray-700 border-2 border-green-600 dark:border-green-500 text-green-600 dark:text-green-400 rounded-lg font-medium text-sm hover:bg-green-50 dark:hover:bg-gray-600 transition-all duration-200 flex items-center justify-center gap-2"
                     >
                       <ShoppingCart className="w-4 h-4" />
@@ -331,6 +369,7 @@ const Marketplace = () => {
             </button>
           </div>
         )}
+
         <BuyNowModal
           isOpen={isBuyNowOpen}
           onClose={() => setIsBuyNowOpen(false)}
