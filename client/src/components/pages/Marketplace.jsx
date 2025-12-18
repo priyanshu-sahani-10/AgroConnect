@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Package,
   Calendar,
@@ -16,6 +16,8 @@ import {
 import { useGetAllCropQuery } from "@/features/api/cropApi.js";
 import { useNavigate } from "react-router-dom";
 import BuyNowModal from "./BuyNowModel";
+import { useDispatch } from "react-redux";
+import { useAddToCartMutation } from "@/features/api/cartApi";
 
 const categories = [
   "All",
@@ -34,39 +36,57 @@ const Marketplace = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCrop, setSelectedCrop] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
   const [isBuyNowOpen, setIsBuyNowOpen] = useState(false);
   const [selectedBuyCrop, setSelectedBuyCrop] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const { data, isError, isLoading } = useGetAllCropQuery();
 
+  //add crop item mutations
+  const [
+    addToCart,
+    { isError: cartItemAddError, isLoading: cartItemAddSuccess },
+  ] = useAddToCartMutation();
+
   const crops = data?.data || [];
 
-  // Step 1: Filter by category
-  const categoryFilteredCrops =
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    },1000); // debounce delay
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+ const filteredCrops = useMemo(() => {
+  let result =
     selectedCategory === "All"
       ? crops
       : crops.filter((crop) => crop.category === selectedCategory);
 
-  // Step 2: Filter by search query
-  const searchAndCategoryFiltered = categoryFilteredCrops.filter((crop) => {
-    if (!searchQuery.trim()) return true;
-    
-    const query = searchQuery.toLowerCase();
-    return (
-      crop.name?.toLowerCase().includes(query) ||
-      crop.description?.toLowerCase().includes(query) ||
-      crop.location?.toLowerCase().includes(query) ||
-      crop.category?.toLowerCase().includes(query) ||
-      crop.reportedBy?.name?.toLowerCase().includes(query)
-    );
-  });
+  if (!debouncedSearch.trim()) return result;
 
-  // Step 3: Sort the filtered results
-  const sortedCrops = [...searchAndCategoryFiltered].sort(
+  const query = debouncedSearch.toLowerCase();
+
+  return result.filter((crop) =>
+    crop.name?.toLowerCase().includes(query) ||
+    crop.description?.toLowerCase().includes(query) ||
+    crop.location?.toLowerCase().includes(query) ||
+    crop.category?.toLowerCase().includes(query) ||
+    crop.reportedBy?.name?.toLowerCase().includes(query)
+  );
+}, [crops, selectedCategory, debouncedSearch]);
+
+
+  const sortedCrops = useMemo(() => {
+  return [...filteredCrops].sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
   );
+}, [filteredCrops]);
 
   const totalPages = Math.ceil(sortedCrops.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -78,7 +98,6 @@ const Marketplace = () => {
     setCurrentPage(1);
     setSearchQuery("");
   };
-
   const handlePageChange = (page) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -89,8 +108,15 @@ const Marketplace = () => {
     navigate(`/marketplace/${crop._id}`);
   };
 
-  const handleAddToCart = (cropId) => {
-    alert(`Crop ${cropId} added to cart!`);
+  const handleAddToCart = async (crop) => {
+    try {
+      const cropId = crop._id;
+      const res = await addToCart({ cropId }).unwrap();
+      const message = res.message;
+      alert(`${message}`);
+    } catch (error) {
+      console.log("error in additem to cart : ", error);
+    }
   };
 
   const handleBuyNow = (crop) => {
@@ -176,7 +202,10 @@ const Marketplace = () => {
           </div>
           {searchQuery && (
             <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-              Searching for: <span className="font-semibold text-green-600 dark:text-green-400">"{searchQuery}"</span>
+              Searching for:{" "}
+              <span className="font-semibold text-green-600 dark:text-green-400">
+                "{searchQuery}"
+              </span>
             </p>
           )}
         </div>
@@ -201,10 +230,8 @@ const Marketplace = () => {
                   No Crops Found
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  {searchQuery 
-                    ? `No crops found matching "${searchQuery}". Try a different search term.`
-                    : "No crops in this category. Check back later or try another category."
-                  }
+                  No crops in this category. Check back later or try another
+                  category.
                 </p>
               </div>
             </div>
@@ -286,8 +313,9 @@ const Marketplace = () => {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleAddToCart(crop._id);
+                        handleAddToCart(crop);
                       }}
+                      disabled={cartItemAddError}
                       className="flex-1 px-3 py-2.5 bg-white dark:bg-gray-700 border-2 border-green-600 dark:border-green-500 text-green-600 dark:text-green-400 rounded-lg font-medium text-sm hover:bg-green-50 dark:hover:bg-gray-600 transition-all duration-200 flex items-center justify-center gap-2"
                     >
                       <ShoppingCart className="w-4 h-4" />
@@ -369,7 +397,6 @@ const Marketplace = () => {
             </button>
           </div>
         )}
-
         <BuyNowModal
           isOpen={isBuyNowOpen}
           onClose={() => setIsBuyNowOpen(false)}
