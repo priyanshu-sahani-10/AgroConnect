@@ -12,7 +12,6 @@ export default function ClerkSync() {
 
     (async () => {
       const token = await getToken();
-      console.log("token : ",token);
       
       await syncUser({
         email: user.primaryEmailAddress.emailAddress,

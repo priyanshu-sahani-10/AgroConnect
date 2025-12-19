@@ -58,6 +58,13 @@ export default function Navbar() {
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-6">
+              {!user && <Link to="/landing-page">
+                    <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors">
+                      <ShoppingCart className="w-4 h-4" /> Marketplace
+                    </button>
+                  </Link>}
+
+
               {user && user.name && (
                 <>
                   <Link to="/">
@@ -81,7 +88,7 @@ export default function Navbar() {
                   )}
 
                   {user.role === "buyer" && (
-                    <Link to="/orders">
+                    <Link to="/my-orders">
                       <button className="flex items-center gap-2 px-6 py-2 bg-green-600 dark:bg-green-700 text-white rounded-lg hover:bg-green-700 dark:hover:bg-green-800 transition-colors shadow-md dark:shadow-green-900/50">
                         <Package className="w-4 h-4" /> My Orders
                       </button>

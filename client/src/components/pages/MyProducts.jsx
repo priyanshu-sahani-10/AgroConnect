@@ -16,6 +16,7 @@ import {
   useGetAllUserCropQuery,
 } from "@/features/api/cropApi";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const ITEMS_PER_PAGE = 9;
 
@@ -26,6 +27,10 @@ const MyProducts = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const crops = data?.data || [];
+  
+
+  //user from selector;
+  const user=useSelector((state)=>state.auth.user);
 
   // Pagination calculations
   const totalPages = Math.ceil(crops.length / ITEMS_PER_PAGE);
@@ -36,7 +41,7 @@ const MyProducts = () => {
   // Calculate current earnings (from totalEarning field in user model)
   // This should come from the user's actual earnings, but if not available from API,
   // you can calculate from sold crops
-  const currentEarnings = data?.totalEarning || 0; // Replace with actual field from your API
+  const currentEarnings = user?.totalEarning || 0; // Replace with actual field from your API
 
   // Calculate potential earnings from remaining stock
   const potentialEarnings = crops.reduce((sum, crop) => {

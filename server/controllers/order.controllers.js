@@ -227,6 +227,7 @@ export const verifyRazorpayPayment = async (req, res) => {
     await User.findByIdAndUpdate(order.farmer, {
       $inc: {
         totalEarning: order.totalAmount,
+        totalOrder: 1,
       },
     });
 
@@ -240,4 +241,62 @@ export const verifyRazorpayPayment = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+
+
+
+
+
+
+export const getAllOrderDetails = async (req, res) => {
+  try {
+    // 1️⃣ Clerk user
+    const { userId } = req.auth();
+
+    // 2️⃣ Find Mongo user
+    const user = await User.findOne({ clerkId: userId });
+    if (!user) {
+      return res.status(403).json({
+        success: false,
+        message: "User not authorized",
+      });
+    }
+
+    // 3️⃣ Build query based on role
+    let query = {};
+
+    if (user.role === "buyer") {
+      query.buyer = user._id;
+    } else if (user.role === "farmer") {
+      query.farmer = user._id;
+    } else {
+      return res.status(403).json({
+        success: false,
+        message: "Invalid role",
+      });
+    }
+
+    // 4️⃣ Fetch orders
+    const orders = await Order.find(query)
+      .populate("crop", "name imageUrl price")
+      .populate("buyer", "name mobileNo")
+      .populate("farmer", "name mobileNo")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      role: user.role,
+      totalOrders: orders.length,
+      orders,
+    });
+  } catch (error) {
+    console.error("Get orders error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
 

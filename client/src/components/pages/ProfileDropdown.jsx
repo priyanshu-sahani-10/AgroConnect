@@ -7,7 +7,8 @@ import {
   ShoppingCart, 
   Package, 
   Mail,
-  IndianRupeeIcon
+  IndianRupeeIcon,
+  ShoppingBag
 } from "lucide-react";
 import { SignedIn, useClerk } from "@clerk/clerk-react";
 import { useSelector } from "react-redux";
@@ -106,7 +107,7 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
                           <Package className="w-4 h-4" />
                           <span className="text-xs font-medium">Total Sales</span>
                         </div>
-                        <p className="text-xl font-bold text-green-600 dark:text-green-400">{user.totalSales}</p>
+                        <p className="text-xl font-bold text-green-600 dark:text-green-400">{user.totalOrder}</p>
                       </div>
                       <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
                         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-1">
@@ -142,17 +143,31 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
                   </button>
                 </a>
 
+                
+                  <a href="/my-orders">
+                    <button 
+                      onClick={() => setDropdownOpen(false)}
+                      className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-3 text-sm transition-colors text-gray-900 dark:text-gray-100"
+                    >
+                      <ShoppingBag className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                      <span className="font-medium">My Orders</span>
+                    </button>
+                  </a>
+                
+
                 {user.role === "buyer" && (
-                  <a href="/orders">
+                  <a href="/cart-items">
                     <button 
                       onClick={() => setDropdownOpen(false)}
                       className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-3 text-sm transition-colors text-gray-900 dark:text-gray-100"
                     >
                       <ShoppingCart className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                      <span className="font-medium">My Orders</span>
+                      <span className="font-medium">My Cart</span>
                     </button>
                   </a>
-                )}
+                ) }
+
+
 
                 {user.role === "farmer" && (
                   <a href="/my-products">

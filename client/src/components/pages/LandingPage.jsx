@@ -1,9 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Package,
   Calendar,
   MapPin,
-  IndianRupeeIcon,
   Wheat,
   ChevronLeft,
   ChevronRight,
@@ -12,12 +11,123 @@ import {
   Zap,
   Search,
   X,
+  Lock,
+  LogIn,
+  UserPlus,
 } from "lucide-react";
-import { useGetAllCropQuery } from "@/features/api/cropApi.js";
-import { useNavigate } from "react-router-dom";
-import BuyNowModal from "./BuyNowModel";
-import { useDispatch, useSelector } from "react-redux";
-import { useAddToCartMutation } from "@/features/api/cartApi";
+import { Link } from "react-router-dom";
+
+// Dummy crop data
+const dummyCrops = [
+  {
+    _id: "1",
+    name: "Organic Basmati Rice",
+    description: "Premium quality aromatic basmati rice, perfect for biryanis and special dishes. Naturally grown without pesticides.",
+    category: "Cereals",
+    price: 85,
+    available: 500,
+    productionYear: "2024",
+    location: "Punjab, India",
+    imageUrl: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800&q=80",
+    reportedBy: { name: "Rajesh Kumar" }
+  },
+  {
+    _id: "2",
+    name: "Fresh Red Tomatoes",
+    description: "Farm-fresh, vine-ripened tomatoes with rich flavor. Perfect for cooking and salads.",
+    category: "Vegetables",
+    price: 35,
+    available: 200,
+    productionYear: "2024",
+    location: "Maharashtra, India",
+    imageUrl: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=800&q=80",
+    reportedBy: { name: "Priya Sharma" }
+  },
+  {
+    _id: "3",
+    name: "Organic Green Moong Dal",
+    description: "Protein-rich moong dal, carefully sorted and cleaned. Great source of nutrition.",
+    category: "Pulses",
+    price: 120,
+    available: 300,
+    productionYear: "2024",
+    location: "Rajasthan, India",
+    imageUrl: "https://5.imimg.com/data5/SELLER/Default/2021/11/VP/KI/AM/10888193/whole-green-moong.jpeg",
+    reportedBy: { name: "Amit Patel" }
+  },
+  {
+    _id: "4",
+    name: "Golden Wheat Grains",
+    description: "High-quality wheat grains, ideal for making flour and various traditional dishes.",
+    category: "Grains",
+    price: 25,
+    available: 1000,
+    productionYear: "2024",
+    location: "Haryana, India",
+    imageUrl: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=800&q=80",
+    reportedBy: { name: "Suresh Singh" }
+  },
+  {
+    _id: "5",
+    name: "Fresh Green Spinach",
+    description: "Crisp and fresh spinach leaves, packed with iron and vitamins. Harvested this morning.",
+    category: "Vegetables",
+    price: 40,
+    available: 150,
+    productionYear: "2024",
+    location: "Uttar Pradesh, India",
+    imageUrl: "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=800&q=80",
+    reportedBy: { name: "Meena Devi" }
+  },
+  {
+    _id: "6",
+    name: "Red Chili Powder",
+    description: "Authentic Indian red chili powder with perfect heat level. Adds vibrant color and spice to dishes.",
+    category: "Spices",
+    price: 180,
+    available: 100,
+    productionYear: "2024",
+    location: "Andhra Pradesh, India",
+    imageUrl: "https://www.neonaturalindustries.com/wp-content/uploads/2022/06/red-chillies.jpg",
+    reportedBy: { name: "Venkat Rao" }
+  },
+  {
+    _id: "7",
+    name: "Sweet Alphonso Mangoes",
+    description: "The king of mangoes! Juicy, aromatic Alphonso mangoes straight from the orchard.",
+    category: "Fruits",
+    price: 250,
+    available: 80,
+    productionYear: "2024",
+    location: "Konkan, Maharashtra",
+    imageUrl: "https://farmlovers.org/blobs/stickies/c084827c-0f30-4990-afde-1e3d0fc66320.jpg",
+    reportedBy: { name: "Ganesh Naik" }
+  },
+  {
+    _id: "8",
+    name: "Fresh Green Peas",
+    description: "Sweet and tender green peas, perfect for curries and rice dishes. Freshly shelled.",
+    category: "Vegetables",
+    price: 60,
+    available: 120,
+    productionYear: "2024",
+    location: "Himachal Pradesh, India",
+    imageUrl: "https://images.unsplash.com/photo-1588165171080-c89acfa5ee83?w=800&q=80",
+    reportedBy: { name: "Sanjay Thakur" }
+  },
+  {
+    _id: "9",
+    name: "Turmeric Powder",
+    description: "Pure turmeric powder with natural golden color. Known for its medicinal properties and culinary uses.",
+    category: "Spices",
+    price: 160,
+    available: 200,
+    productionYear: "2024",
+    location: "Tamil Nadu, India",
+    imageUrl: "https://www.viralspices.com/wp-content/uploads/2022/01/Evaluating-the-Differences-between-Fresh-and-Dried-Turmeric.jpg",
+    reportedBy: { name: "Lakshmi Iyer" }
+  }
+];
 
 const categories = [
   "All",
@@ -30,138 +140,91 @@ const categories = [
   "Other",
 ];
 
-const ITEMS_PER_PAGE = 9;
+const ITEMS_PER_PAGE = 6;
 
-const Marketplace = () => {
+const LandingPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedCrop, setSelectedCrop] = useState(null);
-  const [isBuyNowOpen, setIsBuyNowOpen] = useState(false);
-  const [selectedBuyCrop, setSelectedBuyCrop] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const filteredCrops = useMemo(() => {
+    let result =
+      selectedCategory === "All"
+        ? dummyCrops
+        : dummyCrops.filter((crop) => crop.category === selectedCategory);
 
-  const { data, isError, isLoading } = useGetAllCropQuery();
+    if (!searchQuery.trim()) return result;
 
-  //selector user from redux
-  const user=useSelector((state)=>state.auth.user);
+    const query = searchQuery.toLowerCase();
+    return result.filter(
+      (crop) =>
+        crop.name?.toLowerCase().includes(query) ||
+        crop.description?.toLowerCase().includes(query) ||
+        crop.location?.toLowerCase().includes(query) ||
+        crop.category?.toLowerCase().includes(query) ||
+        crop.reportedBy?.name?.toLowerCase().includes(query)
+    );
+  }, [selectedCategory, searchQuery]);
 
-  //add crop item mutations
-  const [
-    addToCart,
-    {  isLoading: isCartItemAdding },
-  ] = useAddToCartMutation();
-
-  const crops = data?.data || [];
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(searchQuery);
-    },1000); // debounce delay
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
- const filteredCrops = useMemo(() => {
-  let result =
-    selectedCategory === "All"
-      ? crops
-      : crops.filter((crop) => crop.category === selectedCategory);
-
-  if (!debouncedSearch.trim()) return result;
-
-  const query = debouncedSearch.toLowerCase();
-
-  return result.filter((crop) =>
-    crop.name?.toLowerCase().includes(query) ||
-    crop.description?.toLowerCase().includes(query) ||
-    crop.location?.toLowerCase().includes(query) ||
-    crop.category?.toLowerCase().includes(query) ||
-    crop.reportedBy?.name?.toLowerCase().includes(query)
-  );
-}, [crops, selectedCategory, debouncedSearch]);
-
-
-  const sortedCrops = useMemo(() => {
-  return [...filteredCrops].sort(
-    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-  );
-}, [filteredCrops]);
-
-  const totalPages = Math.ceil(sortedCrops.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(filteredCrops.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentCrops = sortedCrops.slice(startIndex, endIndex);
+  const currentCrops = filteredCrops.slice(startIndex, endIndex);
 
   const handleCategoryChange = (cat) => {
     setSelectedCategory(cat);
     setCurrentPage(1);
-    setSearchQuery("");
   };
+
   const handlePageChange = (page) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleCropClick = (crop) => {
-    setSelectedCrop(crop._id);
-    navigate(`/marketplace/${crop._id}`);
+  const handleActionClick = () => {
+    setShowLoginPrompt(true);
+    setTimeout(() => setShowLoginPrompt(false), 3000);
   };
-
-  const handleAddToCart = async (crop) => {
-    try {
-      const cropId = crop._id;
-      const res = await addToCart({ cropId }).unwrap();
-      const message = res.message;
-      alert(`${message}`);
-    } catch (error) {
-      console.log("error in additem to cart : ", error);
-      alert(`${error?.data.message}`)
-    }
-  };
-
-  const handleBuyNow = (crop) => {
-    if(user.role==="farmer"){
-      alert("Farmer are not allowed to buy products");
-      return;
-    }
-    setSelectedBuyCrop(crop);
-    setIsBuyNowOpen(true);
-  };
-
-  if (isLoading) {
-    return (
-      <div className="p-8 text-center">
-        <p className="text-lg">Loading crops…</p>
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="p-8 text-center">
-        <p className="text-lg text-red-600">
-          Failed to load crops. Try again later.
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6 transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
+        {/* Header with Call to Action */}
+        <div className="mb-8 relative">
+          <div className="absolute top-0 right-0">
+           
+          </div>
+
           <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-2">
             AgroConnect Marketplace
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
             Fresh crops directly from farmers to your doorstep
           </p>
+          <div className="inline-block px-4 py-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-lg text-sm font-medium">
+            🌾 Preview Mode - Login to access full marketplace
+          </div>
         </div>
+
+        {/* Login Prompt Toast */}
+        {showLoginPrompt && (
+          <div className="fixed top-20 right-6 z-50 bg-white dark:bg-gray-800 border-2 border-green-500 rounded-lg shadow-2xl p-4 animate-fade-in max-w-sm">
+            <div className="flex items-start gap-3">
+              <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                <Lock className="w-5 h-5 text-green-600 dark:text-green-400" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                  Login Required
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Please login or sign up to add items to cart and make purchases.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Category Filters */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 mb-6 transition-colors duration-300">
@@ -208,21 +271,13 @@ const Marketplace = () => {
               </button>
             )}
           </div>
-          {searchQuery && (
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-              Searching for:{" "}
-              <span className="font-semibold text-green-600 dark:text-green-400">
-                "{searchQuery}"
-              </span>
-            </p>
-          )}
         </div>
 
         {/* Results Summary */}
-        {sortedCrops.length > 0 && (
+        {filteredCrops.length > 0 && (
           <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
-            Showing {startIndex + 1}-{Math.min(endIndex, sortedCrops.length)} of{" "}
-            {sortedCrops.length} crops
+            Showing {startIndex + 1}-{Math.min(endIndex, filteredCrops.length)}{" "}
+            of {filteredCrops.length} crops
           </div>
         )}
 
@@ -238,8 +293,7 @@ const Marketplace = () => {
                   No Crops Found
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  No crops in this category. Check back later or try another
-                  category.
+                  Try adjusting your search or category filter.
                 </p>
               </div>
             </div>
@@ -247,9 +301,13 @@ const Marketplace = () => {
             currentCrops.map((crop) => (
               <div
                 key={crop._id}
-                onClick={() => handleCropClick(crop)}
-                className="cursor-pointer bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden group border border-transparent dark:border-gray-700"
+                className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden group border border-transparent dark:border-gray-700 relative"
               >
+                {/* Preview Badge Overlay */}
+                <div className="absolute top-2 left-2 z-10 px-3 py-1 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full text-xs font-medium text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600">
+                  Preview
+                </div>
+
                 {/* Image */}
                 {crop.imageUrl && (
                   <div className="relative h-48 overflow-hidden">
@@ -311,32 +369,27 @@ const Marketplace = () => {
                     {crop.reportedBy && (
                       <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
                         <User className="w-4 h-4 mr-2 text-green-500 dark:text-green-400" />
-                        <span>Owner : {crop.reportedBy.name}</span>
+                        <span>Owner: {crop.reportedBy.name}</span>
                       </div>
                     )}
                   </div>
 
-                  {/* Action Buttons */}
+                  {/* Action Buttons with Lock Icon */}
                   <div className="flex items-center gap-2 pt-4 border-t border-gray-100 dark:border-gray-700">
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleAddToCart(crop);
-                      }}
-                      disabled={isCartItemAdding}
-                      className="flex-1 px-3 py-2.5 bg-white dark:bg-gray-700 border-2 border-green-600 dark:border-green-500 text-green-600 dark:text-green-400 rounded-lg font-medium text-sm hover:bg-green-50 dark:hover:bg-gray-600 transition-all duration-200 flex items-center justify-center gap-2"
+                      onClick={handleActionClick}
+                      className="flex-1 px-3 py-2.5 bg-white dark:bg-gray-700 border-2 border-green-600 dark:border-green-500 text-green-600 dark:text-green-400 rounded-lg font-medium text-sm hover:bg-green-50 dark:hover:bg-gray-600 transition-all duration-200 flex items-center justify-center gap-2 relative"
                     >
                       <ShoppingCart className="w-4 h-4" />
+                      <Lock className="w-3 h-3 absolute top-1 right-1" />
                       Add to Cart
                     </button>
                     <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleBuyNow(crop);
-                      }}
-                      className="flex-1 px-3 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 shadow-md"
+                      onClick={handleActionClick}
+                      className="flex-1 px-3 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 shadow-md relative"
                     >
                       <Zap className="w-4 h-4" />
+                      <Lock className="w-3 h-3 absolute top-1 right-1" />
                       Buy Now
                     </button>
                   </div>
@@ -405,14 +458,53 @@ const Marketplace = () => {
             </button>
           </div>
         )}
-        <BuyNowModal
-          isOpen={isBuyNowOpen}
-          onClose={() => setIsBuyNowOpen(false)}
-          crop={selectedBuyCrop}
-        />
+
+        {/* Bottom CTA Banner */}
+        <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl shadow-xl p-8 text-center text-white mb-8">
+          <h2 className="text-3xl font-bold mb-3">
+            Ready to Connect with Farmers?
+          </h2>
+          <p className="text-green-50 mb-6 max-w-2xl mx-auto">
+            Join AgroConnect today to access fresh, quality crops directly from
+            farmers. Support local agriculture and get the best produce delivered
+            to your doorstep.
+          </p>
+          <div className="flex gap-4 justify-center">
+            <Link
+              to='/sign-up'
+              className="px-8 py-3 bg-white text-green-600 rounded-lg font-semibold hover:bg-green-50 transition-all duration-200 flex items-center gap-2 shadow-lg"
+            >
+              <UserPlus className="w-5 h-5" />
+              Create Account
+            </Link>
+            <Link
+              to='/sign-in'
+              className="px-8 py-3 bg-green-700 text-white rounded-lg font-semibold hover:bg-green-800 transition-all duration-200 flex items-center gap-2"
+            >
+              <LogIn className="w-5 h-5" />
+              Login Now
+            </Link>
+          </div>
+        </div>
       </div>
+
+      <style>{`
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fade-in {
+          animation: fade-in 0.3s ease-out;
+        }
+      `}</style>
     </div>
   );
 };
 
-export default Marketplace;
+export default LandingPage;
