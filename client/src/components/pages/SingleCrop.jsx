@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ArrowLeft,
   Package,
@@ -22,28 +22,73 @@ import BuyNowModal from "./BuyNowModel";
 import { useGetSingleCropQuery } from "@/features/api/cropApi";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { addToCart } from "@/features/slice/cartSlice";
 import { useAddToCartMutation } from "@/features/api/cartApi";
+
+//chat imports
+import {
+  useStartConversationMutation,
+  useGetMessagesQuery,
+} from "@/features/api/chatApi";
+import { getSocket } from "@/services/socket";
+import { useSelector } from "react-redux";
+
 const SingleCrop = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [message, setMessage] = useState("");
   const [isBuyNowOpen, setIsBuyNowOpen] = useState(false);
-  const [chatMessages, setChatMessages] = useState([
+
+  const user = useSelector((state) => state.auth.user);
+  // console.log("User in SingleCrop.jsx : ", user?._id);
+
+  //chat data
+  const [conversation, setConversation] = useState(null);
+  const [message, setMessage] = useState("");
+  const [startConversation] = useStartConversationMutation();
+  const { data: messagesData, refetch } = useGetMessagesQuery(
+    conversation ? { conversationId: conversation._id } : undefined,
     {
-      id: 1,
-      sender: "owner",
-      text: "Hello! Thank you for your interest in my crops. How can I help you?",
-      time: "10:30 AM",
-    },
-  ]);
+      skip: !conversation,
+    }
+  );
+
+  const chatMessages = messagesData?.messages || [];
+
+  useEffect(() => {
+    if (!conversation) return;
+
+    const socket = getSocket();
+
+    const handleReceiveMessage = ({ conversationId }) => {
+      if (conversationId === conversation._id) {
+        refetch();
+      }
+    };
+
+    socket.on("receive_message", handleReceiveMessage);
+
+    return () => {
+      socket.off("receive_message", handleReceiveMessage);
+    };
+  }, [conversation, refetch]);
+
+  useEffect(() => {
+    if (!conversation) return;
+
+    const socket = getSocket();
+    socket.emit("join_conversation", conversation._id);
+
+    return () => {
+      socket.emit("leave_conversation", conversation._id);
+    };
+  }, [conversation]);
 
   // Sample crop data - replace with actual data from props/route
   const { cropId } = useParams();
   const { data, isError, isLoading } = useGetSingleCropQuery({ cropId });
   const crop = data?.data;
   // console.log("single crop data : ",crop);
+  // console.log("single crop datauser : ", crop?.reportedBy?._id);
 
   //add cart items mututions
   const [
@@ -52,36 +97,36 @@ const SingleCrop = () => {
   ] = useAddToCartMutation();
 
   const handleSendMessage = () => {
-    if (message.trim()) {
-      setChatMessages([
-        ...chatMessages,
-        {
-          id: chatMessages.length + 1,
-          sender: "buyer",
-          text: message,
-          time: new Date().toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-        },
-      ]);
-      setMessage("");
+    if (!message.trim() || !conversation) return;
 
-      // Simulate owner response after 2 seconds
+    const socket = getSocket();
+
+    socket.emit("send_message", {
+      conversationId: conversation._id,
+      text: message,
+      relatedCropId: crop._id,
+    });
+
+    setMessage("");
+  };
+
+  const handleChatWithSeller = async () => {
+    try {
+      const res = await startConversation({
+        otherUserId: crop.reportedBy._id,
+      }).unwrap();
+
+      // 1️⃣ Save conversation in state
+      setConversation(res.conversation);
+      setIsChatOpen(true);
+
+      // 2️⃣ Join socket room AFTER state update
       setTimeout(() => {
-        setChatMessages((prev) => [
-          ...prev,
-          {
-            id: prev.length + 1,
-            sender: "owner",
-            text: "Thank you for your message! I will get back to you shortly.",
-            time: new Date().toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            }),
-          },
-        ]);
-      }, 2000);
+        const socket = getSocket();
+        socket.emit("join_conversation", res.conversation._id);
+      }, 0);
+    } catch (err) {
+      console.error("Chat start failed", err);
     }
   };
 
@@ -207,7 +252,7 @@ const SingleCrop = () => {
                 </div>
               </div>
               <button
-                onClick={() => setIsChatOpen(true)}
+                onClick={handleChatWithSeller}
                 className="w-full mt-4 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 shadow-md"
               >
                 <MessageCircle className="w-4 h-4" />
@@ -344,27 +389,26 @@ const SingleCrop = () => {
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
               {chatMessages.map((msg) => (
                 <div
-                  key={msg.id}
+                  key={msg._id}
                   className={`flex ${
-                    msg.sender === "buyer" ? "justify-end" : "justify-start"
+                    msg.senderId._id === user._id
+                      ? "justify-end"
+                      : "justify-start"
                   }`}
                 >
                   <div
                     className={`max-w-xs px-4 py-2 rounded-2xl ${
-                      msg.sender === "buyer"
+                      msg.senderId._id === user._id
                         ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white"
                         : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-100"
                     }`}
                   >
                     <p className="text-sm">{msg.text}</p>
-                    <p
-                      className={`text-xs mt-1 ${
-                        msg.sender === "buyer"
-                          ? "text-green-100"
-                          : "text-gray-500 dark:text-gray-400"
-                      }`}
-                    >
-                      {msg.time}
+                    <p className="text-xs mt-1 opacity-70">
+                      {new Date(msg.createdAt).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                     </p>
                   </div>
                 </div>

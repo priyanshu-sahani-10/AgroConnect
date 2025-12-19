@@ -17,14 +17,16 @@ import MyOrders from './components/pages/MyOrders';
 import SingleCrop from './components/pages/SingleCrop';
 import Cart from './components/pages/Cart';
 import LandingPage from './components/pages/LandingPage';
+import SignUpPage from './components/pages/SignUpPage';
+import SignInPage from './components/pages/SignInPage';
 export default function App() {
   return (
     <>
     <Routes>
       <Route path='/' element={<Layout/>}>
         <Route index element={<Home/>}/>
-        <Route path="sign-in" element={<SignIn/>}/>
-        <Route path="sign-up" element={<SignUp/>}/>
+        <Route path="sign-in" element={<SignInPage/>}/>
+        <Route path="sign-up" element={<SignUpPage/>}/>
         <Route path="create-account" element={<Account/>}/>
         <Route path="marketplace" element={<Marketplace/>}/>
         <Route path="marketplace/:cropId" element={<SingleCrop/>}/>
@@ -43,17 +45,6 @@ export default function App() {
       </Route>
     </Routes>
     </>
-    // <header>
-    //   {/* <SignedOut>
-    //     <SignIn />
-    //   </SignedOut> */}
-    //   {/* <SignedIn> */}
-    //     <Navbar/>
-    //   <Account/>
-    //   <Home/>
-    //   <Footer/>
-    //     <UserButton />
-    //   {/* </SignedIn> */}
-    // </header>
+
   );
 }
