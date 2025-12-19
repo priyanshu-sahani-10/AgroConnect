@@ -16,6 +16,13 @@ export const addToCart = async (req, res) => {
       });
     }
 
+    if (user.role === "farmer") {
+      return res.status(403).json({
+        success: false,
+        message: "Farmers are not allowed to buy products.",
+      });
+    }
+
     const { cropId } = req.params;
 
     const crop = await Crop.findById(cropId);
@@ -67,7 +74,6 @@ export const addToCart = async (req, res) => {
   }
 };
 
-
 export const getCart = async (req, res) => {
   try {
     const { userId } = req.auth;
@@ -102,8 +108,6 @@ export const getCart = async (req, res) => {
   }
 };
 
-
-
 export const removeFromCart = async (req, res) => {
   try {
     const { userId } = req.auth;
@@ -125,9 +129,7 @@ export const removeFromCart = async (req, res) => {
       });
     }
 
-    cart.items = cart.items.filter(
-      (item) => item.cropId.toString() !== cropId
-    );
+    cart.items = cart.items.filter((item) => item.cropId.toString() !== cropId);
 
     await cart.save();
 
@@ -144,10 +146,6 @@ export const removeFromCart = async (req, res) => {
     });
   }
 };
-
-
-
-
 
 export const clearCart = async (req, res) => {
   try {

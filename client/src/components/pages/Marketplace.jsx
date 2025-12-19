@@ -16,7 +16,7 @@ import {
 import { useGetAllCropQuery } from "@/features/api/cropApi.js";
 import { useNavigate } from "react-router-dom";
 import BuyNowModal from "./BuyNowModel";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useAddToCartMutation } from "@/features/api/cartApi";
 
 const categories = [
@@ -46,10 +46,13 @@ const Marketplace = () => {
 
   const { data, isError, isLoading } = useGetAllCropQuery();
 
+  //selector user from redux
+  const user=useSelector((state)=>state.auth.user);
+
   //add crop item mutations
   const [
     addToCart,
-    { isError: cartItemAddError, isLoading: cartItemAddSuccess },
+    {  isLoading: isCartItemAdding },
   ] = useAddToCartMutation();
 
   const crops = data?.data || [];
@@ -116,10 +119,15 @@ const Marketplace = () => {
       alert(`${message}`);
     } catch (error) {
       console.log("error in additem to cart : ", error);
+      alert(`${error?.data.message}`)
     }
   };
 
   const handleBuyNow = (crop) => {
+    if(user.role==="farmer"){
+      alert("Farmer are not allowed to buy products");
+      return;
+    }
     setSelectedBuyCrop(crop);
     setIsBuyNowOpen(true);
   };
@@ -315,7 +323,7 @@ const Marketplace = () => {
                         e.stopPropagation();
                         handleAddToCart(crop);
                       }}
-                      disabled={cartItemAddError}
+                      disabled={isCartItemAdding}
                       className="flex-1 px-3 py-2.5 bg-white dark:bg-gray-700 border-2 border-green-600 dark:border-green-500 text-green-600 dark:text-green-400 rounded-lg font-medium text-sm hover:bg-green-50 dark:hover:bg-gray-600 transition-all duration-200 flex items-center justify-center gap-2"
                     >
                       <ShoppingCart className="w-4 h-4" />

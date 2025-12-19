@@ -255,42 +255,48 @@ export const getAllOrderDetails = async (req, res) => {
     const { userId } = req.auth();
 
     // 2️⃣ Find Mongo user
-    const buyer = await User.findOne({ clerkId: userId });
-    if (!buyer) {
+    const user = await User.findOne({ clerkId: userId });
+    if (!user) {
       return res.status(403).json({
         success: false,
         message: "User not authorized",
       });
     }
 
-    // 3️⃣ Role check
-    if (buyer.role !== "buyer") {
+    // 3️⃣ Build query based on role
+    let query = {};
+
+    if (user.role === "buyer") {
+      query.buyer = user._id;
+    } else if (user.role === "farmer") {
+      query.farmer = user._id;
+    } else {
       return res.status(403).json({
         success: false,
-        message: "Only buyers can access this resource",
+        message: "Invalid role",
       });
     }
 
-    // 4️⃣ Fetch PAID orders
-    const orders = await Order.find({
-      buyer: buyer._id,
-      // paymentStatus: "PAID",
-    })
-      .populate("crop", "name imageUrl")
+    // 4️⃣ Fetch orders
+    const orders = await Order.find(query)
+      .populate("crop", "name imageUrl price")
+      .populate("buyer", "name mobileNo")
       .populate("farmer", "name mobileNo")
-      .sort({ createdAt: -1 }); // latest first
+      .sort({ createdAt: -1 });
 
     return res.status(200).json({
       success: true,
+      role: user.role,
       totalOrders: orders.length,
       orders,
     });
   } catch (error) {
-    console.error("Get buyer paid orders error:", error);
+    console.error("Get orders error:", error);
     return res.status(500).json({
       success: false,
       message: "Internal server error",
     });
   }
 };
+
 

@@ -143,7 +143,7 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
                   </button>
                 </a>
 
-                {user.role === "buyer" && (
+                
                   <a href="/my-orders">
                     <button 
                       onClick={() => setDropdownOpen(false)}
@@ -153,7 +153,7 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
                       <span className="font-medium">My Orders</span>
                     </button>
                   </a>
-                ) }
+                
 
                 {user.role === "buyer" && (
                   <a href="/cart-items">

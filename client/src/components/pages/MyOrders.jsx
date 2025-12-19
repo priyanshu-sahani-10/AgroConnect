@@ -21,6 +21,8 @@ const MyOrders = () => {
 
   const orders = data?.orders || [];
   const totalOrders = data?.totalOrders || 0;
+  const role=data?.role==="farmer"?"Buyer":"Farmer";
+  const userRole=role.toLowerCase();
 
   // Filter orders by status
   const filteredOrders =
@@ -264,23 +266,23 @@ const MyOrders = () => {
                                 {order.pricePerKg.toFixed(2)}
                               </span>
                             </div>
-                            {order.farmer && (
+                            {order[userRole] && (
                               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                                 <User className="w-4 h-4 text-green-500" />
-                                <span>Farmer: {order.farmer.name}</span>
+                                <span>{role}: {order[userRole].name}</span>
                               </div>
                             )}
-                            {order.farmer?.mobileNo && (
+                            {order[userRole]?.mobileNo && (
                               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                                 <Phone className="w-4 h-4 text-green-500" />
-                                <span>{order.farmer.mobileNo}</span>
+                                <span>{order[userRole].mobileNo}</span>
                               </div>
                             )}
                             {order.deliveryAddress && (
                               <div className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400">
                                 <MapPin className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
                                 <span className="line-clamp-2">
-                                  {order.deliveryAddress}
+                                  {`Delivered To :-> ${order.deliveryAddress}`}
                                 </span>
                               </div>
                             )}
