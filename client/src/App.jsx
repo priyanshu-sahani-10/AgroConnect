@@ -16,6 +16,7 @@ import UpdateUserCrop from './components/pages/UpdateUserCrop';
 import MyOrders from './components/pages/MyOrders';
 import SingleCrop from './components/pages/SingleCrop';
 import Cart from './components/pages/Cart';
+import LandingPage from './components/pages/LandingPage';
 export default function App() {
   return (
     <>
@@ -36,6 +37,7 @@ export default function App() {
         <Route path="updateCrop/:cropId" element={<UpdateUserCrop/>}/>
         <Route path="my-orders" element={<MyOrders/>}/>
         <Route path="cart-items" element={<Cart/>}/>
+        <Route path="landing-page" element={<LandingPage/>}/>
 
         <Route/>
       </Route>

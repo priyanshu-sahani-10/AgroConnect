@@ -58,6 +58,13 @@ export default function Navbar() {
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-6">
+              {!user && <Link to="/landing-page">
+                    <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100 transition-colors">
+                      <ShoppingCart className="w-4 h-4" /> Marketplace
+                    </button>
+                  </Link>}
+
+
               {user && user.name && (
                 <>
                   <Link to="/">
