@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, MessageCircle } from 'lucide-react';
 import ChatList from './ChatList';
 import ChatWindow from './ChatWindow';
@@ -8,7 +9,6 @@ import { getSocket } from '@/services/socket';
 const ChatModal = ({ onClose, currentUserId, preSelectedConversation = null }) => {
   const [selectedConversation, setSelectedConversation] = useState(preSelectedConversation);
   const { data, isLoading, refetch } = useGetAllConversationsQuery();
-
   const conversations = data?.conversations || [];
 
   useEffect(() => {
@@ -26,43 +26,45 @@ const ChatModal = ({ onClose, currentUserId, preSelectedConversation = null }) =
     };
   }, [currentUserId, refetch]);
 
-  return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+  const modalContent = (
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
+      style={{ zIndex: 9999 }}
+      onClick={onClose}
+    >
       <div 
-        className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-5xl h-[700px] flex overflow-hidden"
+        className="bg-white rounded-lg shadow-2xl w-full max-w-5xl h-[600px] flex overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Left Side - Chat List */}
-        <div 
-          className={`${
-            selectedConversation ? 'hidden md:flex' : 'flex'
-          } w-full md:w-96 border-r border-gray-200 dark:border-gray-700 flex-col`}
-        >
+        <div className="w-80 border-r border-gray-200 flex flex-col bg-gray-50">
           {/* Header */}
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-gradient-to-r from-green-600 to-emerald-600">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <MessageCircle className="w-6 h-6" />
-              Messages
-            </h2>
-            <button
-              onClick={onClose}
-              className="p-1 hover:bg-white/20 rounded-full transition-colors"
-            >
-              <X className="w-6 h-6 text-white" />
-            </button>
+          <div className="px-6 py-4 border-b border-gray-200 bg-white">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-gray-800">Messages</h2>
+              <button
+                onClick={onClose}
+                className="text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-full"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
           </div>
 
           {/* Chat List */}
-          <ChatList
-            conversations={conversations}
-            loading={isLoading}
-            onSelectConversation={setSelectedConversation}
-            currentUserId={currentUserId}
-          />
+          <div className="flex-1 overflow-y-auto">
+            <ChatList
+              conversations={conversations}
+              selectedConversation={selectedConversation}
+              onSelectConversation={setSelectedConversation}
+              isLoading={isLoading}
+              currentUserId={currentUserId}
+            />
+          </div>
         </div>
 
         {/* Right Side - Chat Window */}
-        <div className={`${selectedConversation ? 'flex' : 'hidden md:flex'} flex-1 flex-col`}>
+        <div className="flex-1 flex flex-col bg-white">
           {selectedConversation ? (
             <ChatWindow
               conversation={selectedConversation}
@@ -70,22 +72,20 @@ const ChatModal = ({ onClose, currentUserId, preSelectedConversation = null }) =
               onBack={() => setSelectedConversation(null)}
             />
           ) : (
-            <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-              <div className="text-center">
-                <MessageCircle className="w-20 h-20 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
-                <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  Select a conversation
-                </h3>
-                <p className="text-gray-500 dark:text-gray-400">
-                  Choose a chat from the list to start messaging
-                </p>
+            <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
+              <div className="bg-gray-100 rounded-full p-6 mb-4">
+                <MessageCircle className="w-16 h-16 text-gray-300" />
               </div>
+              <h3 className="text-xl font-medium text-gray-600 mb-2">Select a conversation</h3>
+              <p className="text-sm text-gray-400">Choose a chat from the list to start messaging</p>
             </div>
           )}
         </div>
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };
 
 export default ChatModal;

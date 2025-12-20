@@ -30,7 +30,7 @@ const categories = [
   "Other",
 ];
 
-const ITEMS_PER_PAGE = 9;
+const ITEMS_PER_PAGE = 6;
 
 const Marketplace = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
