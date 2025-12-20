@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   ArrowLeft,
   Package,
@@ -35,6 +35,7 @@ import { useSelector } from "react-redux";
 const SingleCrop = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const messagesEndRef = useRef(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isBuyNowOpen, setIsBuyNowOpen] = useState(false);
 
@@ -148,6 +149,12 @@ useEffect(() => {
   const handleBuyNow = () => {
     setIsBuyNowOpen(true);
   };
+
+//Prevent scrolling when new message arrive
+useEffect(() => {
+  messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+}, [chatMessages]);
+
 
   if (isLoading) {
     return (
@@ -419,6 +426,7 @@ useEffect(() => {
                   </div>
                 </div>
               ))}
+              <div ref={messagesEndRef} />
             </div>
 
             {/* Chat Input */}

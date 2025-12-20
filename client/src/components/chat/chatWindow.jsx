@@ -1,10 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Send, Circle, Check, CheckCheck, Smile } from 'lucide-react';
-import { getSocket } from '@/services/socket';
-import { useGetMessagesQuery } from '@/features/api/chatApi';
+import React, { useState, useEffect, useRef } from "react";
+import {
+  ArrowLeft,
+  Send,
+  Circle,
+  Check,
+  CheckCheck,
+  Smile,
+} from "lucide-react";
+import { getSocket } from "@/services/socket";
+import { useGetMessagesQuery } from "@/features/api/chatApi";
 
 const ChatWindow = ({ conversation, currentUserId, onBack }) => {
-  const [newMessage, setNewMessage] = useState('');
+  const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
@@ -28,25 +35,25 @@ const ChatWindow = ({ conversation, currentUserId, onBack }) => {
     const socket = getSocket();
 
     // Join conversation room
-    socket.emit('join_conversation', {
+    socket.emit("join_conversation", {
       conversationId: conversation._id,
       userId: currentUserId,
     });
 
     // Mark messages as read
-    socket.emit('mark_as_read', {
+    socket.emit("mark_as_read", {
       conversationId: conversation._id,
       userId: currentUserId,
     });
 
     // Listen for new messages
-    socket.on('receive_message', (data) => {
+    socket.on("receive_message", (data) => {
       if (data.conversationId === conversation._id) {
         setMessages((prev) => [...prev, data.message]);
         scrollToBottom();
 
         // Mark as read immediately
-        socket.emit('mark_as_read', {
+        socket.emit("mark_as_read", {
           conversationId: conversation._id,
           userId: currentUserId,
         });
@@ -54,7 +61,7 @@ const ChatWindow = ({ conversation, currentUserId, onBack }) => {
     });
 
     // Listen for typing indicator
-    socket.on('user_typing', ({ isTyping: typing }) => {
+    socket.on("user_typing", ({ isTyping: typing }) => {
       setIsTyping(typing);
       if (typing) {
         scrollToBottom();
@@ -62,7 +69,7 @@ const ChatWindow = ({ conversation, currentUserId, onBack }) => {
     });
 
     // Listen for read receipts
-    socket.on('messages_read', ({ conversationId, readBy }) => {
+    socket.on("messages_read", ({ conversationId, readBy }) => {
       if (conversationId === conversation._id && readBy !== currentUserId) {
         setMessages((prev) =>
           prev.map((msg) =>
@@ -73,19 +80,19 @@ const ChatWindow = ({ conversation, currentUserId, onBack }) => {
     });
 
     return () => {
-      socket.emit('leave_conversation', {
+      socket.emit("leave_conversation", {
         conversationId: conversation._id,
         userId: currentUserId,
       });
-      socket.off('receive_message');
-      socket.off('user_typing');
-      socket.off('messages_read');
+      socket.off("receive_message");
+      socket.off("user_typing");
+      socket.off("messages_read");
     };
   }, [conversation._id, currentUserId]);
 
   const scrollToBottom = () => {
     setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, 100);
   };
 
@@ -93,16 +100,16 @@ const ChatWindow = ({ conversation, currentUserId, onBack }) => {
     if (!newMessage.trim()) return;
 
     const socket = getSocket();
-    socket.emit('send_message', {
+    socket.emit("send_message", {
       conversationId: conversation._id,
       senderId: currentUserId,
       text: newMessage.trim(),
     });
 
-    setNewMessage('');
+    setNewMessage("");
 
     // Stop typing indicator
-    socket.emit('typing', {
+    socket.emit("typing", {
       conversationId: conversation._id,
       userId: currentUserId,
       isTyping: false,
@@ -113,7 +120,7 @@ const ChatWindow = ({ conversation, currentUserId, onBack }) => {
     setNewMessage(e.target.value);
 
     const socket = getSocket();
-    socket.emit('typing', {
+    socket.emit("typing", {
       conversationId: conversation._id,
       userId: currentUserId,
       isTyping: true,
@@ -126,7 +133,7 @@ const ChatWindow = ({ conversation, currentUserId, onBack }) => {
 
     // Stop typing after 2 seconds of no input
     typingTimeoutRef.current = setTimeout(() => {
-      socket.emit('typing', {
+      socket.emit("typing", {
         conversationId: conversation._id,
         userId: currentUserId,
         isTyping: false,
@@ -136,8 +143,8 @@ const ChatWindow = ({ conversation, currentUserId, onBack }) => {
 
   const formatMessageTime = (date) => {
     return new Date(date).toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -148,14 +155,15 @@ const ChatWindow = ({ conversation, currentUserId, onBack }) => {
     yesterday.setDate(yesterday.getDate() - 1);
 
     if (msgDate.toDateString() === today.toDateString()) {
-      return 'Today';
+      return "Today";
     } else if (msgDate.toDateString() === yesterday.toDateString()) {
-      return 'Yesterday';
+      return "Yesterday";
     } else {
       return msgDate.toLocaleDateString([], {
-        month: 'short',
-        day: 'numeric',
-        year: msgDate.getFullYear() !== today.getFullYear() ? 'numeric' : undefined,
+        month: "short",
+        day: "numeric",
+        year:
+          msgDate.getFullYear() !== today.getFullYear() ? "numeric" : undefined,
       });
     }
   };
@@ -182,12 +190,12 @@ const ChatWindow = ({ conversation, currentUserId, onBack }) => {
         </button>
 
         <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0">
-          {conversation.otherUser?.name?.charAt(0)?.toUpperCase() || '?'}
+          {conversation.otherUser?.name?.charAt(0)?.toUpperCase() || "?"}
         </div>
 
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-gray-800 dark:text-gray-100 truncate">
-            {conversation.otherUser?.name || 'Unknown User'}
+            {conversation.otherUser?.name || "Unknown User"}
           </h3>
           <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
             <Circle className="w-2 h-2 fill-green-500 text-green-500" />
@@ -202,7 +210,9 @@ const ChatWindow = ({ conversation, currentUserId, onBack }) => {
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
               <div className="w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Loading messages...</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Loading messages...
+              </p>
             </div>
           </div>
         ) : (
@@ -223,20 +233,26 @@ const ChatWindow = ({ conversation, currentUserId, onBack }) => {
                     return (
                       <div
                         key={msg._id}
-                        className={`flex ${isSentByMe ? 'justify-end' : 'justify-start'}`}
+                        className={`flex ${
+                          isSentByMe ? "justify-end" : "justify-start"
+                        }`}
                       >
                         <div
                           className={`max-w-xs lg:max-w-md xl:max-w-lg px-4 py-2 rounded-2xl shadow-sm ${
                             isSentByMe
-                              ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-br-none'
-                              : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-bl-none'
+                              ? "bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-br-none"
+                              : "bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-bl-none"
                           }`}
                         >
-                          <p className="text-sm break-words whitespace-pre-wrap">{msg.text}</p>
+                          <p className="text-sm break-words whitespace-pre-wrap">
+                            {msg.text}
+                          </p>
                           <div className="flex items-center justify-end gap-1 mt-1">
                             <span
                               className={`text-xs ${
-                                isSentByMe ? 'text-green-100' : 'text-gray-500 dark:text-gray-400'
+                                isSentByMe
+                                  ? "text-green-100"
+                                  : "text-gray-500 dark:text-gray-400"
                               }`}
                             >
                               {formatMessageTime(msg.createdAt)}
@@ -267,11 +283,11 @@ const ChatWindow = ({ conversation, currentUserId, onBack }) => {
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
                     <div
                       className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                      style={{ animationDelay: '0.2s' }}
+                      style={{ animationDelay: "0.2s" }}
                     ></div>
                     <div
                       className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                      style={{ animationDelay: '0.4s' }}
+                      style={{ animationDelay: "0.4s" }}
                     ></div>
                   </div>
                 </div>
@@ -291,17 +307,17 @@ const ChatWindow = ({ conversation, currentUserId, onBack }) => {
               value={newMessage}
               onChange={handleTyping}
               onKeyPress={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
+                if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
                   handleSendMessage();
                 }
               }}
               placeholder="Type a message..."
-              rows="1"
-              className="w-full bg-transparent text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 border-none focus:outline-none resize-none max-h-32"
+              rows={1}
+              className="w-full bg-transparent text-gray-800 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 border-none focus:outline-none resize-none overflow-y-auto"
               style={{
-                minHeight: '24px',
-                maxHeight: '128px',
+                minHeight: "40px", // 1 line
+                maxHeight: "160px", // ~5 lines
               }}
             />
           </div>

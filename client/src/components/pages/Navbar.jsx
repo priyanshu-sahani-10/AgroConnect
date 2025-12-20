@@ -30,7 +30,7 @@ export default function Navbar() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const { data } = useGetAllConversationsQuery();
   const totalUnread = data?.totalUnread || 0;
-  const currentUserId = user?._id ; // Get from auth
+  const currentUserId = user?._id; // Get from auth
 
   const logoutHandler = () => {
     console.log("Logout");
@@ -107,9 +107,14 @@ export default function Navbar() {
                   {/* Chat Icon */}
                   <button
                     onClick={() => setIsChatOpen(true)}
-                    className="relative p-2 hover:bg-gray-100 rounded-full"
+                    className="relative flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
                   >
-                    <MessageCircle className="w-6 h-6" />
+                    <MessageCircle className="w-5 h-5" />
+
+                    <span className="hidden lg:inline text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Chat
+                    </span>
+
                     {totalUnread > 0 && (
                       <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
                         {totalUnread > 9 ? "9+" : totalUnread}
@@ -294,9 +299,14 @@ export default function Navbar() {
                     {/* Chat Icon */}
                     <button
                       onClick={() => setIsChatOpen(true)}
-                      className="relative p-2 hover:bg-gray-100 rounded-full"
+                      className="relative flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
                     >
-                      <MessageCircle className="w-6 h-6" />
+                      <MessageCircle className="w-5 h-5" />
+
+                      <span className="hidden lg:inline text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Chat
+                      </span>
+
                       {totalUnread > 0 && (
                         <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
                           {totalUnread > 9 ? "9+" : totalUnread}
