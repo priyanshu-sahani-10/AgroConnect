@@ -72,16 +72,22 @@ const SingleCrop = () => {
     };
   }, [conversation, refetch]);
 
-  useEffect(() => {
-    if (!conversation) return;
+useEffect(() => {
+  if (!conversation) return;
 
-    const socket = getSocket();
-    socket.emit("join_conversation", conversation._id);
+  const socket = getSocket();
 
-    return () => {
-      socket.emit("leave_conversation", conversation._id);
-    };
-  }, [conversation]);
+  socket.emit("join_conversation", {
+    conversationId: conversation._id,
+  });
+
+  return () => {
+    socket.emit("leave_conversation", {
+      conversationId: conversation._id,
+    });
+  };
+}, [conversation]);
+
 
   // Sample crop data - replace with actual data from props/route
   const { cropId } = useParams();
@@ -251,13 +257,13 @@ const SingleCrop = () => {
                   </div>
                 </div>
               </div>
-              <button
+              {user?.role==="buyer" && (<button
                 onClick={handleChatWithSeller}
                 className="w-full mt-4 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 shadow-md"
               >
                 <MessageCircle className="w-4 h-4" />
                 Chat with Seller
-              </button>
+              </button>)}
             </div>
           </div>
 

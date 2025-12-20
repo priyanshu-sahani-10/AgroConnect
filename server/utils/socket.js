@@ -1,11 +1,10 @@
 // ================================================================
-// socket.js - Socket.io Configuration & Event Handlers (FIXED)
+// socket.js - Socket.io Configuration & Event Handlers (FINAL)
 // ================================================================
 
 import { Server } from "socket.io";
 import Message from "../models/message.model.js";
 import Conversation from "../models/conversation.model.js";
-import User from "../models/user.model.js";
 
 // Store online users: Map<userId, socketId>
 const onlineUsers = new Map();
@@ -27,25 +26,27 @@ export const initializeSocket = (server) => {
     // ================================================================
     socket.on("authenticate", async (userId) => {
       try {
-        socket.userId = userId; // 🔐 TRUSTED SOURCE
-        onlineUsers.set(userId, socket.id);
+        socket.userId = userId;
+        onlineUsers.set(userId.toString(), socket.id);
+
         socket.join(`user-${userId}`);
+        socket.emit("authenticated", { userId });
 
         console.log(`✅ User authenticated: ${userId}`);
 
-        socket.emit("authenticated", { userId });
-
-        // Notify other users this user is online
+        // Notify chat partners that user is online
         const conversations = await Conversation.find({
-          participants: userId,
+          $or: [{ buyer: userId }, { farmer: userId }],
         });
 
         conversations.forEach((conv) => {
-          const otherUserId = conv.participants.find(
-            (p) => p.toString() !== userId
-          );
-          if (otherUserId && onlineUsers.has(otherUserId.toString())) {
-            io.to(`user-${otherUserId}`).emit("user_online", { userId });
+          const otherUserId =
+            conv.buyer.toString() === userId ? conv.farmer : conv.buyer;
+
+          if (onlineUsers.has(otherUserId.toString())) {
+            io.to(`user-${otherUserId}`).emit("user_online", {
+              userId,
+            });
           }
         });
       } catch (err) {
@@ -54,7 +55,7 @@ export const initializeSocket = (server) => {
     });
 
     // ================================================================
-    // 2️⃣ JOIN CONVERSATION ROOM (NO DB CHECK ❗)
+    // 2️⃣ JOIN CONVERSATION ROOM
     // ================================================================
     socket.on("join_conversation", ({ conversationId }) => {
       socket.join(`conversation-${conversationId}`);
@@ -67,11 +68,9 @@ export const initializeSocket = (server) => {
     socket.on("send_message", async (data) => {
       try {
         const { conversationId, text, relatedOrderId, relatedCropId } = data;
-
-        if (!text || !text.trim()) return;
-        if (!socket.userId) return;
-
         const senderId = socket.userId;
+
+        if (!senderId || !text?.trim()) return;
 
         // Save message
         const message = await Message.create({
@@ -86,40 +85,37 @@ export const initializeSocket = (server) => {
 
         // Update conversation metadata
         const conversation = await Conversation.findById(conversationId);
-        if (conversation) {
-          conversation.lastMessage = text.trim().slice(0, 100);
-          conversation.lastMessageAt = new Date();
+        if (!conversation) return;
 
-          const otherUserId = conversation.participants.find(
-            (p) => p.toString() !== senderId
-          );
+        conversation.lastMessage = text.trim().slice(0, 100);
+        conversation.lastMessageAt = new Date();
 
-          if (otherUserId) {
-            const currentUnread =
-              conversation.unreadCount.get(otherUserId.toString()) || 0;
-            conversation.unreadCount.set(
-              otherUserId.toString(),
-              currentUnread + 1
-            );
-          }
+        const otherUserId =
+          conversation.buyer.toString() === senderId
+            ? conversation.farmer
+            : conversation.buyer;
 
-          await conversation.save();
+        const unread =
+          conversation.unreadCount.get(otherUserId.toString()) || 0;
 
-          // Navbar notification
-          if (otherUserId && onlineUsers.has(otherUserId.toString())) {
-            io.to(`user-${otherUserId}`).emit("new_message_notification", {
-              conversationId,
-              unreadCount:
-                conversation.unreadCount.get(otherUserId.toString()) || 0,
-            });
-          }
-        }
+        conversation.unreadCount.set(otherUserId.toString(), unread + 1);
+
+        await conversation.save();
 
         // Emit message to chat room
         io.to(`conversation-${conversationId}`).emit("receive_message", {
           message,
           conversationId,
         });
+
+        // Navbar unread notification
+        if (onlineUsers.has(otherUserId.toString())) {
+          io.to(`user-${otherUserId}`).emit("new_message_notification", {
+            conversationId,
+            lastMessage: message.text,
+            lastMessageAt: conversation.lastMessageAt,
+          });
+        }
 
         console.log("📨 Message sent");
       } catch (err) {
@@ -131,20 +127,19 @@ export const initializeSocket = (server) => {
     // 4️⃣ TYPING INDICATOR
     // ================================================================
     socket.on("typing", ({ conversationId, isTyping }) => {
-      socket
-        .to(`conversation-${conversationId}`)
-        .emit("user_typing", {
-          userId: socket.userId,
-          isTyping,
-        });
+      socket.to(`conversation-${conversationId}`).emit("user_typing", {
+        userId: socket.userId,
+        isTyping,
+      });
     });
 
     // ================================================================
-    // 5️⃣ MARK AS READ
+    // 5️⃣ MARK AS READ (FIXED)
     // ================================================================
     socket.on("mark_as_read", async ({ conversationId }) => {
       try {
         const userId = socket.userId;
+        if (!userId) return;
 
         await Message.updateMany(
           {
@@ -156,20 +151,21 @@ export const initializeSocket = (server) => {
         );
 
         const conversation = await Conversation.findById(conversationId);
-        if (conversation) {
-          conversation.unreadCount.set(userId, 0);
-          await conversation.save();
+        if (!conversation) return;
 
-          const otherUserId = conversation.participants.find(
-            (p) => p.toString() !== userId
-          );
+        conversation.unreadCount.set(userId.toString(), 0);
+        await conversation.save();
 
-          if (otherUserId && onlineUsers.has(otherUserId.toString())) {
-            io.to(`user-${otherUserId}`).emit("messages_read", {
-              conversationId,
-              readBy: userId,
-            });
-          }
+        const otherUserId =
+          conversation.buyer.toString() === userId
+            ? conversation.farmer
+            : conversation.buyer;
+
+        if (onlineUsers.has(otherUserId.toString())) {
+          io.to(`user-${otherUserId}`).emit("messages_read", {
+            conversationId,
+            readBy: userId,
+          });
         }
       } catch (err) {
         console.error("Mark read error:", err);
@@ -190,6 +186,7 @@ export const initializeSocket = (server) => {
       console.log("🔴 Socket disconnected:", socket.id);
 
       let disconnectedUserId = null;
+
       for (const [userId, socketId] of onlineUsers.entries()) {
         if (socketId === socket.id) {
           disconnectedUserId = userId;
@@ -198,26 +195,27 @@ export const initializeSocket = (server) => {
         }
       }
 
-      if (disconnectedUserId) {
-        const conversations = await Conversation.find({
-          participants: disconnectedUserId,
-        });
+      if (!disconnectedUserId) return;
 
-        conversations.forEach((conv) => {
-          const otherUserId = conv.participants.find(
-            (p) => p.toString() !== disconnectedUserId
-          );
+      const conversations = await Conversation.find({
+        $or: [{ buyer: disconnectedUserId }, { farmer: disconnectedUserId }],
+      });
 
-          if (otherUserId && onlineUsers.has(otherUserId.toString())) {
-            io.to(`user-${otherUserId}`).emit("user_offline", {
-              userId: disconnectedUserId,
-            });
-          }
-        });
-      }
+      conversations.forEach((conv) => {
+        const otherUserId =
+          conv.buyer.toString() === disconnectedUserId
+            ? conv.farmer
+            : conv.buyer;
+
+        if (onlineUsers.has(otherUserId.toString())) {
+          io.to(`user-${otherUserId}`).emit("user_offline", {
+            userId: disconnectedUserId,
+          });
+        }
+      });
     });
   });
 
-  console.log("✅ Socket.io initialized (FIXED)");
+  console.log("✅ Socket.io initialized (FINAL)");
   return io;
 };

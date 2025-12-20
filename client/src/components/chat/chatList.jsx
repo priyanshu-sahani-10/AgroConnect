@@ -84,7 +84,7 @@ const ChatList = ({ conversations, loading, onSelectConversation, currentUserId 
                         ? 'font-semibold text-gray-900 dark:text-gray-100'
                         : 'text-gray-600 dark:text-gray-400'
                     }`}>
-                      {conv.lastMessage || 'No messages yet'}
+                      {conv.lastMessage || 'Tap to open chat'}
                     </p>
                     {conv.unreadCount > 0 && (
                       <span className="flex-shrink-0 min-w-[20px] h-5 px-1.5 bg-green-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
