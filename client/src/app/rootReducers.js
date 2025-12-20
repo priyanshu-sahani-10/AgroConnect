@@ -4,8 +4,8 @@ import { cropApi } from "@/features/api/cropApi";
 import { orderApi } from "@/features/api/orderApi";
 
 import authReducer from "../features/slice/authSlice";
-import cartReducer from "../features/slice/cartSlice";
 import { cartApi } from "@/features/api/cartApi";
+import { chatApi } from "@/features/api/chatApi";
 
 
 const rootReducer = combineReducers({
@@ -13,6 +13,7 @@ const rootReducer = combineReducers({
   [cropApi.reducerPath]: cropApi.reducer,
   [orderApi.reducerPath]: orderApi.reducer,
   [cartApi.reducerPath]: cartApi.reducer,
+  [chatApi.reducerPath]:chatApi.reducer,
   auth: authReducer,
 });
 
