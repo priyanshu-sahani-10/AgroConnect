@@ -70,3 +70,55 @@ export const getAdminAllOrders=async(req,res)=>{
         })
     }
 }
+
+
+export const blockUnblockUser = async (req, res) => {
+  try {
+    const { userId } = req.auth();
+    const { Id } = req.params;
+    const { isBlocked } = req.body;
+
+    // Check admin
+    const mongoUser = await User.findOne({ clerkId: userId });
+    if(!mongoUser){
+        return res.status(404).json({
+            success:false,
+            message:"Admin not found."
+        })
+    }
+    if (mongoUser.role !== "admin") {
+      return res.status(403).json({
+        success: false,
+        message: "Only admin can block/unblock users",
+      });
+    }
+
+    // Update user
+    const userToBlock=await User.findById(Id);
+    if(userToBlock.role==="admin"){
+      return res.status(200).json({
+        success:true,
+        message:"You can't block admin of AgroConnect",
+      })
+    }
+    const updatedUser = await User.findByIdAndUpdate(
+      Id,
+      { isBlocked },
+      { new: true }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: isBlocked
+        ? "User blocked successfully"
+        : "User unblocked successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Error in blockUnblockUser:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};

@@ -31,10 +31,21 @@ export const adminApi = createApi({
       }),
       providesTags: ["AdminOrders"],
     }),
+
+    blockUnblockUser: builder.mutation({
+      query: ({ userId, isBlocked }) => ({
+        url: `block-unblock/${userId}`,
+        method: "PATCH",
+        body: { isBlocked },
+      }),
+      invalidatesTags: ["AdminUsers"],
+    }),
+
   }),
 });
 
 export const {
   useGetAdminAllUsersQuery,
   useGetAdminAllOrdersQuery,
+  useBlockUnblockUserMutation,
 } = adminApi;

@@ -1,17 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { Users, Search, Filter, Mail, Phone, MapPin, DollarSign, ShoppingCart, Calendar } from 'lucide-react';
-import { useGetAdminAllUsersQuery } from '@/features/api/adminApi';
+import React, { useState } from 'react';
+import { Users, Search, Filter, Mail, Phone, MapPin, DollarSign, ShoppingCart, Calendar, Ban, CheckCircle } from 'lucide-react';
+import { useBlockUnblockUserMutation, useGetAdminAllUsersQuery } from '@/features/api/adminApi';
 
 const AdminUsersPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
 
-  const {data,isError,isLoading,error}=useGetAdminAllUsersQuery();
-
-  // console.log("adminallUser data , ",data);
-  // console.log({data,isError,isLoading,error});
+  const {data, isError, isLoading, error} = useGetAdminAllUsersQuery();
+  const [blockUnblockUser,]=useBlockUnblockUserMutation();
   
-  const users=data?.users || [];
+  const users = data?.users || [];
   
   const filteredUsers = users.filter(user => {
     const matchesSearch = 
@@ -45,6 +43,25 @@ const AdminUsersPage = () => {
     });
   };
 
+  const handleBlockUser = async (userId, isBlocked) => {
+    try {
+      // API call to block/unblock user
+      isBlocked=!isBlocked;     
+      const response = await blockUnblockUser({userId,isBlocked}).unwrap();
+      console.log("response after blocking user ",response);
+      
+      if (response.message) {
+        // Optionally show success message or refetch users
+        alert(response.message);
+      } else {
+        alert('Failed to update user status');
+      }
+    } catch (error) {
+      console.error('Error blocking/unblocking user:', error);
+      alert('An error occurred');
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -61,13 +78,7 @@ const AdminUsersPage = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md">
           <h3 className="text-red-800 font-semibold mb-2">Error</h3>
-          <p className="text-red-600">{error}</p>
-          <button 
-            onClick={fetchUsers}
-            className="mt-4 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-          >
-            Retry
-          </button>
+          <p className="text-red-600">{error?.message || 'Failed to load users'}</p>
         </div>
       </div>
     );
@@ -161,12 +172,15 @@ const AdminUsersPage = () => {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Joined
                   </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredUsers.length === 0 ? (
                   <tr>
-                    <td colSpan="5" className="px-6 py-8 text-center text-gray-500">
+                    <td colSpan="6" className="px-6 py-8 text-center text-gray-500">
                       No users found matching your criteria
                     </td>
                   </tr>
@@ -192,9 +206,6 @@ const AdminUsersPage = () => {
                             <div className="text-sm font-medium text-gray-900">
                               {user.name || 'No name'}
                             </div>
-                            {/* <div className=" text-gray-500 font-mono text-xs">
-                              {user.clerkId.substring(0, 12)}...
-                            </div> */}
                           </div>
                         </div>
                       </td>
@@ -247,6 +258,25 @@ const AdminUsersPage = () => {
                           <Calendar className="w-4 h-4 mr-2 text-gray-400" />
                           {formatDate(user.createdAt)}
                         </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        {user.isBlocked ? (
+                          <button
+                            onClick={() => handleBlockUser(user._id, user.isBlocked)}
+                            className="inline-flex items-center gap-2 px-3 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors font-medium"
+                          >
+                            <CheckCircle className="w-4 h-4" />
+                            Unblock
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleBlockUser(user._id, user.isBlocked)}
+                            className="inline-flex items-center gap-2 px-3 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors font-medium"
+                          >
+                            <Ban className="w-4 h-4" />
+                            Block
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))

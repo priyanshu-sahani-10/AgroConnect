@@ -22,20 +22,20 @@ const userSchema = new mongoose.Schema(
       enum: ["farmer", "buyer", "admin"],
       default: "buyer", // you can change default
     },
-    mobileNo:{
-      type:Number,
+    mobileNo: {
+      type: Number,
     },
-    totalEarning:{
-      type:Number,
-      default:0
+    totalEarning: {
+      type: Number,
+      default: 0,
     },
-    totalSpent:{
-      type:Number,
-      default:0
+    totalSpent: {
+      type: Number,
+      default: 0,
     },
-    totalOrder:{
-      type:Number,
-      default:0
+    totalOrder: {
+      type: Number,
+      default: 0,
     },
     imageUrl: {
       type: String,
@@ -43,6 +43,10 @@ const userSchema = new mongoose.Schema(
     },
     location: {
       type: String,
+    },
+    isBlocked: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }
