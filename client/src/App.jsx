@@ -19,6 +19,8 @@ import Cart from './components/pages/Cart';
 import LandingPage from './components/pages/LandingPage';
 import SignUpPage from './components/pages/SignUpPage';
 import SignInPage from './components/pages/SignInPage';
+import AdminUsersPage from './components/pages/AdminUsersPage';
+import AdminOrdersPage from './components/pages/AdminOrdersPage';
 export default function App() {
   return (
     <>
@@ -40,6 +42,8 @@ export default function App() {
         <Route path="my-orders" element={<MyOrders/>}/>
         <Route path="cart-items" element={<Cart/>}/>
         <Route path="landing-page" element={<LandingPage/>}/>
+        <Route path="getAllUsers" element={<AdminUsersPage/>}/>
+        <Route path="getAllOrders" element={<AdminOrdersPage/>}/>
 
         <Route/>
       </Route>
