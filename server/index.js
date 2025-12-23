@@ -11,6 +11,7 @@ import orderRouter from './routes/order.route.js';
 import cartRouter from './routes/cart.route.js';
 import chatRouter from './routes/chat.route.js';
 import { initializeSocket } from './utils/socket.js';
+import adminRouter from './routes/admin.route.js';
 
 dotenv.config();
 connectDB();
@@ -40,7 +41,8 @@ app.use("/api/v1/crop", cropRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/order", orderRouter);
 app.use("/api/v1/cart", cartRouter);
-app.use("/api/v1/chat", chatRouter);
+app.use("/api/v1/chat", chatRouter); 
+app.use("/api/v1/admin", adminRouter); 
 
 // ✅ Use server.listen() instead of app.listen()
 server.listen(PORT, () => {
