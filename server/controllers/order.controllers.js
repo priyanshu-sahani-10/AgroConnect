@@ -3,20 +3,15 @@ import crypto from "crypto";
 import Crop from "../models/crop.model.js";
 import User from "../models/user.model.js";
 import Order from "../models/order.model.js";
+import { sendOrderEmail } from "../utils/sendEmail.js";
+import { buyerOrderEmail, farmerOrderEmail } from "../utils/emailTemplates.js";
+import { log } from "console";
 
-/**
- * STEP 1: Create Order in DB (with address & phone)
- * Payment is NOT done here
- */
 export const createOrder = async (req, res) => {
   try {
-    // 1️⃣ Get Clerk user
     const { userId } = req.auth();
-
-    // 2️⃣ Extract data from frontend
     const { cropId, quantity, address, phoneNumber } = req.body;
 
-    // 3️⃣ Find Mongo user
     const mongoUser = await User.findOne({ clerkId: userId });
     if (!mongoUser) {
       return res.status(403).json({
@@ -25,7 +20,6 @@ export const createOrder = async (req, res) => {
       });
     }
 
-    // 4️⃣ Buyer role check
     if (mongoUser.role === "farmer") {
       return res.status(409).json({
         success: false,
@@ -33,7 +27,6 @@ export const createOrder = async (req, res) => {
       });
     }
 
-    // 5️⃣ Validate inputs
     if (!cropId || !quantity || quantity <= 0) {
       return res.status(400).json({ message: "Invalid crop or quantity" });
     }
@@ -44,31 +37,26 @@ export const createOrder = async (req, res) => {
       });
     }
 
-    // 6️⃣ Fetch crop
     const crop = await Crop.findById(cropId).populate("reportedBy");
 
     if (!crop) {
       return res.status(404).json({ message: "Crop not found" });
     }
 
-    // 7️⃣ Prevent self-purchase
     if (crop.reportedBy._id.toString() === mongoUser._id.toString()) {
       return res.status(400).json({
         message: "You cannot buy your own crop",
       });
     }
 
-    // 8️⃣ Check availability
     if (quantity > crop.available) {
       return res.status(400).json({
         message: "Requested quantity not available",
       });
     }
 
-    // 9️⃣ Calculate total (ALWAYS backend)
     const totalAmount = Math.round(quantity * crop.price * 100) / 100;
 
-    // 🔟 Create order in DB
     const order = await Order.create({
       buyer: mongoUser._id,
       farmer: crop.reportedBy._id,
@@ -95,9 +83,11 @@ export const createOrder = async (req, res) => {
   }
 };
 
-/**
- * STEP 2: Create Razorpay Order (Payment Intent)
- */
+
+
+
+
+
 export const createRazorpayOrder = async (req, res) => {
   try {
     const { orderId } = req.body;
@@ -106,26 +96,22 @@ export const createRazorpayOrder = async (req, res) => {
       return res.status(400).json({ message: "Order ID is required" });
     }
 
-    // 1️⃣ Fetch order
     const order = await Order.findById(orderId);
 
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // 2️⃣ Prevent double payment
     if (order.paymentStatus === "PAID") {
       return res.status(409).json({ message: "Order already paid" });
     }
 
-    // 3️⃣ Create Razorpay order
     const razorpayOrder = await razorpay.orders.create({
       amount: order.totalAmount * 100, // INR → paise
       currency: "INR",
       receipt: `order_${order._id}`,
     });
 
-    // 4️⃣ Save Razorpay order ID
     order.razorpayOrderId = razorpayOrder.id;
     await order.save();
 
@@ -147,38 +133,27 @@ export const createRazorpayOrder = async (req, res) => {
 
 
 
-/**
- * STEP 5: Verify Razorpay Payment
- */
 export const verifyRazorpayPayment = async (req, res) => {
   try {
-    const {
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature,
-    } = req.body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+      req.body;
 
-    if (
-      !razorpay_order_id ||
-      !razorpay_payment_id ||
-      !razorpay_signature
-    ) {
-      return res.status(400).json({ message: "Payment verification data missing" });
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      return res
+        .status(400)
+        .json({ message: "Payment verification data missing" });
     }
 
-    // 1️⃣ Fetch order using razorpayOrderId
     const order = await Order.findOne({ razorpayOrderId: razorpay_order_id });
 
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // 2️⃣ Prevent double verification
     if (order.paymentStatus === "PAID") {
       return res.status(409).json({ message: "Order already verified" });
     }
 
-    // 3️⃣ Generate signature on backend
     const body = `${razorpay_order_id}|${razorpay_payment_id}`;
 
     const expectedSignature = crypto
@@ -186,7 +161,6 @@ export const verifyRazorpayPayment = async (req, res) => {
       .update(body)
       .digest("hex");
 
-    // 4️⃣ Compare signatures
     if (expectedSignature !== razorpay_signature) {
       order.paymentStatus = "FAILED";
       await order.save();
@@ -201,6 +175,8 @@ export const verifyRazorpayPayment = async (req, res) => {
     order.razorpaySignature = razorpay_signature;
 
     await order.save();
+    await order.populate("buyer farmer crop");
+
 
     // 6️⃣ Reduce inventory
     const crop = await Crop.findById(order.crop);
@@ -231,6 +207,21 @@ export const verifyRazorpayPayment = async (req, res) => {
       },
     });
 
+
+  
+    sendOrderEmail({
+      to: order.buyer.email,
+      subject: "AgroConnect | Order Confirmed",
+      html: buyerOrderEmail(order),
+    }).catch((err) => console.error("Buyer email failed:", err.message));
+
+    // 📧 Send email to Farmer
+    sendOrderEmail({
+      to: order.farmer.email,
+      subject: "AgroConnect | New Order Received",
+      html: farmerOrderEmail(order),
+    }).catch((err) => console.error("Farmer email failed:", err.message));
+
     return res.status(200).json({
       success: true,
       message: "Payment verified and order confirmed",
@@ -241,6 +232,7 @@ export const verifyRazorpayPayment = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 
 
@@ -298,5 +290,3 @@ export const getAllOrderDetails = async (req, res) => {
     });
   }
 };
-
-
