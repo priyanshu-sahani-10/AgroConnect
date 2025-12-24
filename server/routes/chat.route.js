@@ -7,10 +7,11 @@ import {
   sendMessage,
   deleteConversation,
 } from "../controllers/chat.controllers.js";
+import { checkBlockedUser } from "../middleware/blocked.middleware.js";
 
 const chatRouter = express.Router();
 
-
+chatRouter.use(checkBlockedUser);
 chatRouter.route("/start").post(startConversation);
 chatRouter.route("/list").get(getAllConversations);
 chatRouter.route("/:conversationId/messages").get(getMessages);

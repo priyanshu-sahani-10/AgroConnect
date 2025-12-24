@@ -7,19 +7,17 @@ import {
   ShoppingCart, 
   Package, 
   Mail,
-  IndianRupeeIcon,
-  ShoppingBag
+  DollarSign,
+  ShoppingBag,
+  Users,
+  ClipboardList
 } from "lucide-react";
-import { SignedIn, useClerk } from "@clerk/clerk-react";
+import { useClerk } from "@clerk/clerk-react";
 import { useSelector } from "react-redux";
 
 const UserProfileDropdown = ({ wrapperClassName = "" }) => {
   const { signOut } = useClerk();
-  
-
-  const user=useSelector((state)=> state.auth.user);
-  // console.log("user in ProfileDropdown : ",user);
-  
+  const user = useSelector((state) => state.auth.user);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const logoutHandler = async () => {
@@ -33,10 +31,6 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
 
   return (
     <div className={`flex items-center gap-3 ${wrapperClassName}`}>
-      {/* <span className="text-sm text-gray-600 hidden lg:block">
-        Welcome, <span className="font-semibold text-gray-900">{user?.name}</span>
-      </span> */}
-      
       <div className="relative">
         <button 
           onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -94,13 +88,13 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
                       </div>
                       <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
                         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-1">
-                          <IndianRupeeIcon className="w-4 h-4" />
+                          <DollarSign className="w-4 h-4" />
                           <span className="text-xs font-medium">Total Spent</span>
                         </div>
                         <p className="text-xl font-bold text-green-600 dark:text-green-400">₹{user.totalSpent.toLocaleString()}</p>
                       </div>
                     </>
-                  ) : (
+                  ) : user.role === "farmer" ? (
                     <>
                       <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
                         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-1">
@@ -111,10 +105,28 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
                       </div>
                       <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
                         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-1">
-                          <IndianRupeeIcon className="w-4 h-4" />
+                          <DollarSign className="w-4 h-4" />
                           <span className="text-xs font-medium">Total Earned</span>
                         </div>
                         <p className="text-xl font-bold text-green-600 dark:text-green-400">₹{user.totalEarning.toLocaleString()}</p>
+                      </div>
+                    </>
+                  ) : (
+                    // Admin stats
+                    <>
+                      <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-1">
+                          <Users className="w-4 h-4" />
+                          <span className="text-xs font-medium">Platform</span>
+                        </div>
+                        <p className="text-sm font-bold text-purple-600 dark:text-purple-400">Admin Panel</p>
+                      </div>
+                      <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+                        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-1">
+                          <ClipboardList className="w-4 h-4" />
+                          <span className="text-xs font-medium">Management</span>
+                        </div>
+                        <p className="text-sm font-bold text-purple-600 dark:text-purple-400">Full Access</p>
                       </div>
                     </>
                   )}
@@ -143,7 +155,33 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
                   </button>
                 </a>
 
-                
+                {/* Admin-specific menu items */}
+                {user.role === "admin" && (
+                  <>
+                    <a href="/getAllUsers">
+                      <button 
+                        onClick={() => setDropdownOpen(false)}
+                        className="w-full text-left px-4 py-3 hover:bg-purple-50 dark:hover:bg-purple-950/30 flex items-center gap-3 text-sm transition-colors text-gray-900 dark:text-gray-100"
+                      >
+                        <Users className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                        <span className="font-medium">All Users</span>
+                      </button>
+                    </a>
+
+                    <a href="/getAllOrders">
+                      <button 
+                        onClick={() => setDropdownOpen(false)}
+                        className="w-full text-left px-4 py-3 hover:bg-purple-50 dark:hover:bg-purple-950/30 flex items-center gap-3 text-sm transition-colors text-gray-900 dark:text-gray-100"
+                      >
+                        <ClipboardList className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                        <span className="font-medium">All Orders</span>
+                      </button>
+                    </a>
+                  </>
+                )}
+
+                {/* Buyer and Farmer menu items */}
+                {(user.role === "buyer" || user.role === "farmer") && (
                   <a href="/my-orders">
                     <button 
                       onClick={() => setDropdownOpen(false)}
@@ -153,7 +191,7 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
                       <span className="font-medium">My Orders</span>
                     </button>
                   </a>
-                
+                )}
 
                 {user.role === "buyer" && (
                   <a href="/cart-items">
@@ -165,9 +203,7 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
                       <span className="font-medium">My Cart</span>
                     </button>
                   </a>
-                ) }
-
-
+                )}
 
                 {user.role === "farmer" && (
                   <a href="/my-products">
@@ -183,7 +219,7 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
               </div>
 
               {/* Logout */}
-                <div className="border-t border-gray-200 dark:border-gray-700 py-2">
+              <div className="border-t border-gray-200 dark:border-gray-700 py-2">
                 <button
                   onClick={logoutHandler}
                   className="w-full text-left px-4 py-3 hover:bg-red-50 dark:hover:bg-red-950/50 flex items-center gap-3 text-sm text-red-600 dark:text-red-400 font-medium transition-colors"

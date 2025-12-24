@@ -5,6 +5,7 @@ import { cropApi } from "@/features/api/cropApi";
 import { orderApi } from "@/features/api/orderApi";
 import { cartApi } from "@/features/api/cartApi";
 import { chatApi } from "@/features/api/chatApi";
+import { adminApi } from "@/features/api/adminApi";
 
 const appStore = configureStore({
   reducer: rootReducer,
@@ -15,6 +16,7 @@ const appStore = configureStore({
       orderApi.middleware,
       cartApi.middleware,
       chatApi.middleware,
+      adminApi.middleware,
     ),
 });
 
