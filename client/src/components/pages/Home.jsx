@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import React from "react";
 import { Sprout, Users, ShoppingCart, TrendingUp, ArrowRight, Package, MessageCircle, Shield } from "lucide-react";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const user = useSelector((state)=>(state.auth.user)); // Replace with Redux selector
@@ -126,6 +127,7 @@ const Home = () => {
           {/* Right - Feature Cards */}
           <div className="flex-1 relative">
             <div className="grid grid-cols-2 gap-6">
+              <Link to="/farmer">
               <div className="space-y-6">
                 <div className="bg-gradient-to-br from-green-500 to-emerald-500 dark:from-green-600 dark:to-emerald-600 rounded-3xl p-8 text-white shadow-xl dark:shadow-green-900/50">
                   <Sprout className="w-12 h-12 mb-4" />
@@ -135,7 +137,9 @@ const Home = () => {
                   </p>
                 </div>
               </div>
-              <div className="space-y-6">
+              </Link>
+              <Link to="/buyer">
+                <div className="space-y-6">
                 <div className="bg-gradient-to-br from-emerald-500 to-green-500 dark:from-emerald-600 dark:to-green-600 rounded-3xl p-8 text-white shadow-xl dark:shadow-emerald-900/50">
                   <ShoppingCart className="w-12 h-12 mb-4" />
                   <h3 className="text-2xl font-bold mb-2">For Buyers</h3>
@@ -144,6 +148,7 @@ const Home = () => {
                   </p>
                 </div>
               </div>
+              </Link>
             </div>
           </div>
         </div>

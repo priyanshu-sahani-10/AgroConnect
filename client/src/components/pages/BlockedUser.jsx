@@ -30,7 +30,6 @@ const BlockedUserPage = () => {
   };
 
   const {signOut}=useClerk();
-  const navigate=useNavigate();
   const onClickhandler = async (path) => {
   await signOut({
     redirectUrl: `/${path}`,
@@ -331,7 +330,7 @@ const BlockedUserPage = () => {
                 <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
                   <Phone className="w-5 h-5 text-green-600" />
                 </div>
-                <h3 className="font-semibold text-gray-900">Phone Support</h3>
+                <h3 className="font-semibold text-gray-900">WhatsApp Support</h3>
               </div>
               <p className="text-gray-600 mb-4">Call us directly to discuss your account</p>
               <a
