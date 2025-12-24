@@ -1,16 +1,22 @@
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp-relay.brevo.com",
+  port: 587,
+  secure: false, // TLS
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: process.env.BREVO_SMTP_LOGIN,
+    pass: process.env.BREVO_SMTP_KEY,
   },
 });
 
-export const sendEmail = async ({ to, subject, html }) => {
+export const sendOrderEmail = async ({ to, subject, html }) => {
+  if (!to) {
+    throw new Error("No recipient email provided");
+  }
+
   await transporter.sendMail({
-    from: `"AgroConnect" <${process.env.EMAIL_USER}>`,
+    from: '"AgroConnect" <priyanshusahani038@gmail.com>',
     to,
     subject,
     html,
