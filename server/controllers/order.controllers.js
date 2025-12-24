@@ -3,6 +3,8 @@ import crypto from "crypto";
 import Crop from "../models/crop.model.js";
 import User from "../models/user.model.js";
 import Order from "../models/order.model.js";
+import { sendEmail } from "../utils/sendEmail.js";
+import { buyerOrderEmail, farmerOrderEmail,  } from "../utils/emailTemplates.js";
 
 /**
  * STEP 1: Create Order in DB (with address & phone)
@@ -141,29 +143,18 @@ export const createRazorpayOrder = async (req, res) => {
   }
 };
 
-
-
-
-
-
-
 /**
  * STEP 5: Verify Razorpay Payment
  */
 export const verifyRazorpayPayment = async (req, res) => {
   try {
-    const {
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature,
-    } = req.body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+      req.body;
 
-    if (
-      !razorpay_order_id ||
-      !razorpay_payment_id ||
-      !razorpay_signature
-    ) {
-      return res.status(400).json({ message: "Payment verification data missing" });
+    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      return res
+        .status(400)
+        .json({ message: "Payment verification data missing" });
     }
 
     // 1️⃣ Fetch order using razorpayOrderId
@@ -201,6 +192,7 @@ export const verifyRazorpayPayment = async (req, res) => {
     order.razorpaySignature = razorpay_signature;
 
     await order.save();
+    await order.populate("buyer farmer crop");
 
     // 6️⃣ Reduce inventory
     const crop = await Crop.findById(order.crop);
@@ -231,6 +223,20 @@ export const verifyRazorpayPayment = async (req, res) => {
       },
     });
 
+    // 📧 Send email to Buyer
+    sendEmail({
+      to: order.buyer.email,
+      subject: "AgroConnect | Order Confirmed",
+      html: buyerOrderEmail(order),
+    }).catch((err) => console.error("Buyer email failed:", err.message));
+
+    // 📧 Send email to Farmer
+    sendEmail({
+      to: order.farmer.email,
+      subject: "AgroConnect | New Order Received",
+      html: farmerOrderEmail(order),
+    }).catch((err) => console.error("Farmer email failed:", err.message));
+
     return res.status(200).json({
       success: true,
       message: "Payment verified and order confirmed",
@@ -241,13 +247,6 @@ export const verifyRazorpayPayment = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
-
-
-
-
-
-
-
 
 export const getAllOrderDetails = async (req, res) => {
   try {
@@ -298,5 +297,3 @@ export const getAllOrderDetails = async (req, res) => {
     });
   }
 };
-
-
