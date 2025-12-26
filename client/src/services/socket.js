@@ -17,7 +17,6 @@ export const initSocket = (userId) => {
     });
 
     socket.on("connect", () => {
-      console.log("✅ Socket connected:", socket.id);
 
       // 🔐 Authenticate socket with backend
       if (userId) {
@@ -26,7 +25,7 @@ export const initSocket = (userId) => {
     });
 
     socket.on("authenticated", (data) => {
-      console.log("🔐 Socket authenticated:", data);
+      // console.log("🔐 Socket authenticated:", data);
     });
 
     socket.on("disconnect", (reason) => {

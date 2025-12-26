@@ -3,31 +3,15 @@ import { useSelector } from 'react-redux';
 import { initSocket } from '../../services/socket';
 
 export default function SocketProvider({ children }) {
-  // Get user from Redux store
   const user = useSelector((state) => state.auth.user);
 
   // Initialize Socket.io when user logs in
   useEffect(() => {
     if (user && user._id) {
-      console.log('🔌 Initializing Socket.io for user:', user._id);
-      console.log('👤 User details:', { name: user.name, role: user.role });
+      console.log('🔌 Initializing Socket.io for user:',{ name:user.name});
       
       const socket = initSocket();
       
-      // Authenticate socket connection
-      socket.emit('authenticate', user._id);
-      
-      // Listen for authentication confirmation
-      socket.on('authenticated', (data) => {
-        console.log('✅ Socket authenticated:', data);
-      });
-
-      // Listen for errors
-      socket.on('error', (error) => {
-        console.error('❌ Socket error:', error);
-      });
-
-      // Listen for new message notifications
       socket.on('new_message_notification', (data) => {
         console.log('📨 New message notification:', data);
         // You can show a toast notification here if you have a toast library
@@ -35,7 +19,6 @@ export default function SocketProvider({ children }) {
         // toast.success(`New message from ${data.senderName}`);
       });
 
-      // Listen for online/offline status
       socket.on('user_online', (data) => {
         console.log('👤 User online:', data.userId);
       });
@@ -44,12 +27,10 @@ export default function SocketProvider({ children }) {
         console.log('👤 User offline:', data.userId);
       });
 
-      // Listen for typing indicator
       socket.on('user_typing', (data) => {
         console.log('✍️ User typing:', data);
       });
 
-      // Listen for messages read
       socket.on('messages_read', (data) => {
         console.log('✓✓ Messages read:', data);
       });
