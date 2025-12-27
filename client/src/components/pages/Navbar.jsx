@@ -12,7 +12,7 @@ import {
   Sprout,
   MessageCircle,
 } from "lucide-react";
-import UserProfileDropdown from "./ProfileDropDown";
+import UserProfileDropdown from "./ProfileDropdown";
 import { useSelector } from "react-redux";
 import DarkMode from "./DarkMode";
 import ChatModal from "../chat/chatModel";
