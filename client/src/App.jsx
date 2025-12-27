@@ -7,7 +7,6 @@ import { Route, Routes } from 'react-router-dom';
 import Layout from './components/pages/Layout';
 import Marketplace from './components/pages/Marketplace';
 import MyProducts from './components/pages/MyProducts';
-import Orders from './components/pages/Orders';
 import Chats from './components/pages/Chats';
 import RegisterCrop from './components/pages/RegisterCrop';
 import Profile from './components/pages/Profile';
@@ -37,7 +36,6 @@ export default function App() {
         <Route path="marketplace" element={<Marketplace/>}/>
         <Route path="marketplace/:cropId" element={<SingleCrop/>}/>
         <Route path="my-products" element={<MyProducts/>}/>
-        <Route path="orders" element={<Orders/>}/>
         <Route path="chat" element={<Chats/>}/>
         <Route path="register-crop" element={<RegisterCrop/>}/>
         <Route path="profile" element={<Profile/>}/>
