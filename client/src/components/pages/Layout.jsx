@@ -1,9 +1,9 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 import Footer from './Footer.jsx'
-import Navbar from './Navbar'
+import Navbar from './Navbar.jsx'
 import { useSelector } from 'react-redux'
-import BlockedUserPage from './BlockedUser'
+import BlockedUserPage from './BlockedUser.jsx'
 
 function Layout() {
 
