@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, MessageCircle } from 'lucide-react';
-import ChatList from './ChatList';
-import ChatWindow from './ChatWindow';
+import ChatList from './chatList';
+import ChatWindow from './chatWindow';
 import { useGetAllConversationsQuery } from '@/features/api/chatApi';
 import { getSocket } from '@/services/socket';
 
