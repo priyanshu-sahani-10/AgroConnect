@@ -1,6 +1,6 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
-import Footer from './footer'
+import Footer from './Footer.jsx'
 import Navbar from './Navbar'
 import { useSelector } from 'react-redux'
 import BlockedUserPage from './BlockedUser'
