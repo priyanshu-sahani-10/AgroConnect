@@ -75,7 +75,8 @@ The platform focuses on **direct communication, secure payments, and a smooth us
 - Razorpay (Payments)
 - Socket.io (Chat)
 - Cloudinary (Image Uploads)
-
+- Clerk (Authentication)
+- Nodemailer / Brevo (Email notifications)
 ---
 
 ## 🚀 Why AgroConnect?

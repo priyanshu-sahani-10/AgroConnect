@@ -47,5 +47,4 @@ app.use("/api/v1/admin", adminRouter);
 // ✅ Use server.listen() instead of app.listen()
 server.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
-  console.log(`✅ Socket.io ready`);
 });
