@@ -16,11 +16,12 @@ import UserProfileDropdown from "./ProfileDropDown";
 import { useSelector } from "react-redux";
 import DarkMode from "./DarkMode";
 import ChatModal from "../chat/chatModel";
-import { useGetAllConversationsQuery } from "@/features/api/chatApi";
+import { getSocket } from "@/services/socket";
 
 export default function Navbar() {
   const user = useSelector((state) => state.auth.user);
   // console.log("User in Navbar : ", user);
+const [totalUnread, setTotalUnread] = useState(0);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -28,8 +29,6 @@ export default function Navbar() {
 
   //chat data
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const { data } = useGetAllConversationsQuery();
-  const totalUnread = data?.totalUnread || 0;
   const currentUserId = user?._id; // Get from auth
 
   const logoutHandler = () => {
@@ -42,6 +41,41 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+
+
+useEffect(() => {
+  if (!currentUserId) return;
+
+  const attachUnreadListener = () => {
+    const socket = getSocket();
+    if (!socket) return;
+
+    // console.log("🔗 Navbar attaching unread listener");
+
+    socket.on("user_unread_update", ({ totalUnread }) => {
+      // console.log("🔥 Navbar received unread:", totalUnread);
+      setTotalUnread(totalUnread);
+    });
+  };
+
+  // try immediately
+  attachUnreadListener();
+
+  // wait if socket initializes later
+  window.addEventListener("socket-ready", attachUnreadListener);
+
+  return () => {
+    const socket = getSocket();
+    socket?.off("user_unread_update");
+    window.removeEventListener("socket-ready", attachUnreadListener);
+  };
+}, [currentUserId]);
+
+
+
+
+
 
   return (
     <>
@@ -127,6 +161,7 @@ export default function Navbar() {
                     <ChatModal
                       onClose={() => setIsChatOpen(false)}
                       currentUserId={currentUserId}
+                      
                     />
                   )}
 

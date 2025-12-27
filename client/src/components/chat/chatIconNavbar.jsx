@@ -29,12 +29,10 @@ const ChatIconNavbar = ({ currentUserId }) => {
 
     socket.on("new_message_notification", refreshUnread);
     socket.on("messages_read", refreshUnread);
-    socket.on("conversation_read", refreshUnread);
 
     return () => {
       socket.off("new_message_notification", refreshUnread);
       socket.off("messages_read", refreshUnread);
-      socket.off("conversation_read", refreshUnread);
     };
   }, [currentUserId, refetch]);
 
