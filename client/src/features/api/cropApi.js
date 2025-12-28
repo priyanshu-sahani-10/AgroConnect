@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-const CROP_API = "http://localhost:5000/api/v1/crop/";
+const CROP_API = `${import.meta.env.VITE_API_BASE_URL}/api/v1/crop`;
 
 export const cropApi = createApi({
   reducerPath: "cropApi",
