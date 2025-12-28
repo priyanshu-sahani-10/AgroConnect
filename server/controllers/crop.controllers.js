@@ -97,7 +97,9 @@ export const getAllCrops = async (req, res) => {
 
 export const getUserCrops = async (req, res) => {
   try {
+    console.log("req.auth in getUserCrops : ",req.auth);
     const { userId } = req.auth(); // Clerk ID
+    console.log("user : ",userId);
 
     // 1️⃣ Find Mongo user
     const user = await User.findOne({ clerkId: userId });

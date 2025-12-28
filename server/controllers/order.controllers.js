@@ -244,7 +244,9 @@ export const verifyRazorpayPayment = async (req, res) => {
 export const getAllOrderDetails = async (req, res) => {
   try {
     // 1️⃣ Clerk user
-    const { userId } = req.auth();
+    console.log("req.auth in getUserOrders : ",req.auth);
+    const { userId } = req.auth(); // Clerk ID
+    console.log("user : ",userId);
 
     // 2️⃣ Find Mongo user
     const user = await User.findOne({ clerkId: userId });
