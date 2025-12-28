@@ -6,7 +6,17 @@ export const adminApi = createApi({
   reducerPath: "adminApi",
   baseQuery: fetchBaseQuery({
     baseUrl: ADMIN_API,
-    credentials: "include",
+    prepareHeaders: async (headers) => {
+      const token = window.Clerk?.session
+        ? await window.Clerk.session.getToken()
+        : null;
+
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+
+      return headers;
+    },
   }),
 
   tagTypes: ["AdminUsers", "AdminOrders"],
@@ -17,7 +27,7 @@ export const adminApi = createApi({
       query: () => ({
         url: "getAllUsers",
         method: "GET",
-        credentials: "include",
+        
       }),
       providesTags: ["AdminUsers"],
     }),
@@ -27,7 +37,7 @@ export const adminApi = createApi({
       query: () => ({
         url: "getAllOrders",
         method: "GET",
-        credentials: "include",
+        
       }),
       providesTags: ["AdminOrders"],
     }),

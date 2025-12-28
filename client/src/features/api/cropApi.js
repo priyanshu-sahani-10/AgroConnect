@@ -1,12 +1,21 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
 const CROP_API = `${import.meta.env.VITE_API_BASE_URL}/api/v1/crop`;
 
 export const cropApi = createApi({
   reducerPath: "cropApi",
   baseQuery: fetchBaseQuery({
     baseUrl: CROP_API,
-    credentials: "include",
+    prepareHeaders: async (headers) => {
+      const token = window.Clerk?.session
+        ? await window.Clerk.session.getToken()
+        : null;
+
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+
+      return headers;
+    },
   }),
 
   tagTypes: ["UserCrop", "AllCrop"],
@@ -27,9 +36,8 @@ export const cropApi = createApi({
       query: () => ({
         url: "getCrops",
         method: "GET",
-        credentials: "include",
       }),
-       providesTags: ["AllCrop"],
+      providesTags: ["AllCrop"],
     }),
 
     //3.Get All user Crops Api
@@ -37,7 +45,6 @@ export const cropApi = createApi({
       query: () => ({
         url: "userCrops",
         method: "GET",
-        credentials: "include",
       }),
       providesTags: ["UserCrop"],
     }),
@@ -48,7 +55,7 @@ export const cropApi = createApi({
       query: ({ cropId, formData }) => ({
         url: `updateCrop/${cropId}`,
         method: "PUT",
-        credentials: "include",
+
         body: formData,
       }),
       invalidatesTags: ["UserCrop", "AllCrop"],
@@ -60,21 +67,17 @@ export const cropApi = createApi({
       query: ({ cropId }) => ({
         url: `getCrop/${cropId}`,
         method: "GET",
-        credentials: "include",
       }),
     }),
 
-
     //6. Delete User Crop API
-    deleteUserCrop:builder.mutation({
-      query:({cropId})=>({
-        url:`deleteCrop/${cropId}`,
-        method:"DELETE",
-        credentials:"include"
+    deleteUserCrop: builder.mutation({
+      query: ({ cropId }) => ({
+        url: `deleteCrop/${cropId}`,
+        method: "DELETE",
       }),
       invalidatesTags: ["UserCrop", "AllCrop"],
-    })
-
+    }),
   }),
 });
 
@@ -84,5 +87,5 @@ export const {
   useGetAllUserCropQuery,
   useUpdateUserCropMutation,
   useGetSingleCropQuery,
-  useDeleteUserCropMutation
+  useDeleteUserCropMutation,
 } = cropApi;

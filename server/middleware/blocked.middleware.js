@@ -2,7 +2,7 @@ import User from "../models/user.model.js";
 
 export const checkBlockedUser = async (req, res, next) => {
   try {
-    const { userId } = req.auth();
+    const { userId } = req.auth;
 
     const mongoUser = await User.findOne({ clerkId: userId });
     if (!mongoUser) {

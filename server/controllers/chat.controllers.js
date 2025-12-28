@@ -5,7 +5,7 @@ import User from "../models/user.model.js";
 
 export const startConversation = async (req, res) => {
   try {
-    const { userId } = req.auth();
+    const { userId } = req.auth;
     const { otherUserId } = req.body;
 
     const currentUser = await User.findOne({ clerkId: userId });
@@ -59,7 +59,7 @@ export const startConversation = async (req, res) => {
 
 export const getAllConversations = async (req, res) => {
   try {
-    const { userId } = req.auth();
+    const { userId } = req.auth;
 
     const currentUser = await User.findOne({ clerkId: userId });
     if (!currentUser) {
@@ -111,7 +111,7 @@ export const getAllConversations = async (req, res) => {
 ================================================================ */
 export const getMessages = async (req, res) => {
   try {
-    const { userId } = req.auth();
+    const { userId } = req.auth;
     const { conversationId } = req.params;
     const { page = 1, limit = 50 } = req.query;
 
@@ -176,7 +176,7 @@ export const getMessages = async (req, res) => {
 ================================================================ */
 export const sendMessage = async (req, res) => {
   try {
-    const { userId } = req.auth();
+    const { userId } = req.auth;
     const { conversationId } = req.params;
     const { text, relatedOrderId, relatedCropId } = req.body;
 
@@ -239,7 +239,7 @@ export const sendMessage = async (req, res) => {
 ================================================================ */
 export const deleteConversation = async (req, res) => {
   try {
-    const { userId } = req.auth();
+    const { userId } = req.auth;
     const { conversationId } = req.params;
 
     const currentUser = await User.findOne({ clerkId: userId });

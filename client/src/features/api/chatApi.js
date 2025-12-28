@@ -4,7 +4,17 @@ export const chatApi = createApi({
   reducerPath: "chatApi",
   baseQuery: fetchBaseQuery({
     baseUrl: `${import.meta.env.VITE_API_BASE_URL}/api/v1/chat`,
-    credentials: "include",
+    prepareHeaders: async (headers) => {
+      const token = window.Clerk?.session
+        ? await window.Clerk.session.getToken()
+        : null;
+
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+
+      return headers;
+    },
   }),
   tagTypes: ["Conversations", "Messages"],
   endpoints: (builder) => ({

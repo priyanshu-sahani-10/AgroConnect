@@ -3,7 +3,7 @@ import Order from "../models/order.model.js";
 
 export const getAdminAllUsers= async(req,res)=>{
     try {
-        const {userId}=req.auth();
+        const {userId}=req.auth;
     const mongoUser= await User.findOne({clerkId:userId});
     if(!mongoUser){
         return res.status(404).json({
@@ -36,7 +36,7 @@ export const getAdminAllUsers= async(req,res)=>{
 
 export const getAdminAllOrders=async(req,res)=>{
     try {
-        const {userId}=req.auth();
+        const {userId}=req.auth;
     const mongoUser= await User.findOne({clerkId:userId});
     if(!mongoUser){
         return res.status(404).json({
@@ -74,7 +74,7 @@ export const getAdminAllOrders=async(req,res)=>{
 
 export const blockUnblockUser = async (req, res) => {
   try {
-    const { userId } = req.auth();
+    const { userId } = req.auth;
     const { Id } = req.params;
     const { isBlocked } = req.body;
 

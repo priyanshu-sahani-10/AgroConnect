@@ -3,7 +3,7 @@ import cloudinary from "../utils/cloudinary.js";
 
 export const registerUser = async (req, res) => {
   try {
-    const { userId } = req.auth();
+    const { userId } = req.auth;
     const { name, email, role, location, mobileNo } = req.body || {};
     let user = await User.findOne({ clerkId: userId });
     if (!name || !email || !role || !location || !mobileNo) {
@@ -52,7 +52,7 @@ export const syncUser = async (req, res) => {
   // console.log("Syncing user arrived");
   
   try {
-    const { userId } = req.auth();
+    const { userId } = req.auth;
     const { email } = req.body;
     // console.log("ClerkId : ", userId);
     // console.log("email : ", email);
@@ -77,7 +77,7 @@ export const syncUser = async (req, res) => {
 
 export const updateUserProfile = async (req, res) => {
   try {
-    const { userId } = req.auth();
+    const { userId } = req.auth;
     const user = await User.findOne({ clerkId: userId });
 
     if (!user) {

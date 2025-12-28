@@ -7,7 +7,17 @@ export const orderApi = createApi({
 
   baseQuery: fetchBaseQuery({
     baseUrl: ORDER_API,
-    credentials: "include",
+    prepareHeaders: async (headers) => {
+      const token = window.Clerk?.session
+        ? await window.Clerk.session.getToken()
+        : null;
+
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+
+      return headers;
+    },
   }),
 
   tagTypes: ["Order"],

@@ -9,7 +9,7 @@ import { log } from "console";
 
 export const createOrder = async (req, res) => {
   try {
-    const { userId } = req.auth();
+    const { userId } = req.auth;
     const { cropId, quantity, address, phoneNumber } = req.body;
 
     const mongoUser = await User.findOne({ clerkId: userId });
@@ -245,7 +245,7 @@ export const getAllOrderDetails = async (req, res) => {
   try {
     // 1️⃣ Clerk user
     console.log("req.auth in getUserOrders : ",req.auth);
-    const { userId } = req.auth(); // Clerk ID
+    const { userId } = req.auth; // Clerk ID
     console.log("user : ",userId);
 
     // 2️⃣ Find Mongo user

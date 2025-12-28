@@ -39,7 +39,7 @@ export const RegisterCrop = async (req, res) => {
         message: "All field are required",
       });
     }
-    const { userId } = req.auth();
+    const { userId } = req.auth;
     const mongoUser = await User.findOne({ clerkId: userId });
     // console.log("UserId for register crop : ",userId);
     // console.log("MongoUser for register crop : ",mongoUser);
@@ -98,7 +98,7 @@ export const getAllCrops = async (req, res) => {
 export const getUserCrops = async (req, res) => {
   try {
     console.log("req.auth in getUserCrops : ",req.auth);
-    const { userId } = req.auth(); // Clerk ID
+    const { userId } = req.auth; // Clerk ID
     console.log("user : ",userId);
 
     // 1️⃣ Find Mongo user
@@ -218,7 +218,7 @@ export const deleteCrop = async (req, res) => {
         .json({ success: false, message: "crop not found" });
     }
 
-    const { userId } = req.auth();
+    const { userId } = req.auth;
     const mongoUser = await User.findOne({ clerkId: userId });
     if (!mongoUser) {
       return res.status(403).json({
