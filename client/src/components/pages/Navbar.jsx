@@ -17,11 +17,13 @@ import { useSelector } from "react-redux";
 import DarkMode from "./DarkMode";
 import ChatModal from "../chat/chatModel";
 import { getSocket } from "@/services/socket";
+import { useClerk } from "@clerk/clerk-react";
 
 export default function Navbar() {
   const user = useSelector((state) => state.auth.user);
   // console.log("User in Navbar : ", user);
-const [totalUnread, setTotalUnread] = useState(0);
+  const { signOut } = useClerk();
+  const [totalUnread, setTotalUnread] = useState(0);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -31,8 +33,8 @@ const [totalUnread, setTotalUnread] = useState(0);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const currentUserId = user?._id; // Get from auth
 
-  const logoutHandler = () => {
-    console.log("Logout");
+  const logoutHandler = async () => {
+    await signOut();
     setMobileMenuOpen(false);
   };
 
@@ -42,40 +44,33 @@ const [totalUnread, setTotalUnread] = useState(0);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (!currentUserId) return;
 
+    const attachUnreadListener = () => {
+      const socket = getSocket();
+      if (!socket) return;
 
-useEffect(() => {
-  if (!currentUserId) return;
+      // console.log("🔗 Navbar attaching unread listener");
 
-  const attachUnreadListener = () => {
-    const socket = getSocket();
-    if (!socket) return;
+      socket.on("user_unread_update", ({ totalUnread }) => {
+        // console.log("🔥 Navbar received unread:", totalUnread);
+        setTotalUnread(totalUnread);
+      });
+    };
 
-    // console.log("🔗 Navbar attaching unread listener");
+    // try immediately
+    attachUnreadListener();
 
-    socket.on("user_unread_update", ({ totalUnread }) => {
-      // console.log("🔥 Navbar received unread:", totalUnread);
-      setTotalUnread(totalUnread);
-    });
-  };
+    // wait if socket initializes later
+    window.addEventListener("socket-ready", attachUnreadListener);
 
-  // try immediately
-  attachUnreadListener();
-
-  // wait if socket initializes later
-  window.addEventListener("socket-ready", attachUnreadListener);
-
-  return () => {
-    const socket = getSocket();
-    socket?.off("user_unread_update");
-    window.removeEventListener("socket-ready", attachUnreadListener);
-  };
-}, [currentUserId]);
-
-
-
-
-
+    return () => {
+      const socket = getSocket();
+      socket?.off("user_unread_update");
+      window.removeEventListener("socket-ready", attachUnreadListener);
+    };
+  }, [currentUserId]);
 
   return (
     <>
@@ -161,7 +156,6 @@ useEffect(() => {
                     <ChatModal
                       onClose={() => setIsChatOpen(false)}
                       currentUserId={currentUserId}
-                      
                     />
                   )}
 
@@ -246,7 +240,7 @@ useEffect(() => {
         >
           <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
             {!user ? (
-              <div className="space-y-2 sm:space-y-3">
+              <div className="flex flex-col gap-2">
                 <Link to="/sign-in" onClick={() => setMobileMenuOpen(false)}>
                   <button className="w-full px-4 py-3 border-2 border-green-600 dark:border-green-500 text-green-600 dark:text-green-400 rounded-lg hover:bg-green-50 dark:hover:bg-green-950/50 transition-colors text-sm sm:text-base font-medium">
                     Login
@@ -260,7 +254,7 @@ useEffect(() => {
                 </Link>
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="flex flex-col gap-2">
                 {/* User Info Header in Mobile Menu */}
                 {user.name && (
                   <div className="pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
@@ -338,7 +332,7 @@ useEffect(() => {
                     >
                       <MessageCircle className="w-5 h-5" />
 
-                      <span className="hidden lg:inline text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <span className="inline text-sm font-medium text-gray-700 dark:text-gray-300">
                         Chat
                       </span>
 
