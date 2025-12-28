@@ -25,7 +25,7 @@ const getTotalUnread = async (userId) => {
 export const initializeSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: process.env.FRONTEND_URL || "http://localhost:5173",
+      origin: process.env.CLIENT_URL || "http://localhost:5173",
       methods: ["GET", "POST"],
       credentials: true,
     },
@@ -38,19 +38,19 @@ export const initializeSocket = (server) => {
      * 1️⃣ AUTHENTICATE USER
      */
     socket.on("authenticate", async (userId) => {
-  socket.userId = userId;
-  onlineUsers.set(userId.toString(), socket.id);
-  socket.join(`user-${userId}`);
-  socket.emit("authenticated", { userId });
+      if (!userId) return;
 
-  // 🔔 SEND INITIAL UNREAD COUNT
-  const totalUnread = await getTotalUnread(userId);
-  // console.log("📨 EMITTING initial unread:", totalUnread);
-  io.to(`user-${userId}`).emit("user_unread_update", {
-    totalUnread,
-  });
-});
+      // If this socket already authenticated, ignore
+      if (socket.userId) return;
 
+      socket.userId = userId;
+      onlineUsers.set(userId.toString(), socket.id);
+      socket.join(`user-${userId}`);
+      socket.emit("authenticated", { userId });
+
+      const totalUnread = await getTotalUnread(userId);
+      io.to(`user-${userId}`).emit("user_unread_update", { totalUnread });
+    });
 
     /**
      * 2️⃣ JOIN CONVERSATION ROOM
@@ -106,7 +106,6 @@ export const initializeSocket = (server) => {
             totalUnread,
           });
         }
-
       } catch (err) {
         console.error("Send message error:", err);
       }
@@ -178,7 +177,6 @@ export const initializeSocket = (server) => {
           conversationId,
           readBy: userId,
         });
-
       } catch (err) {
         console.error("Mark read error:", err);
       }

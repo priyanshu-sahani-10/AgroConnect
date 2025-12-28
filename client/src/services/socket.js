@@ -2,13 +2,12 @@ import { io } from "socket.io-client";
 
 let socket = null;
 
-/**
- * Initialize socket connection ONCE
- * Must be called with userId after login
- */
+const SOCKET_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
 export const initSocket = (userId) => {
   if (!socket) {
-    socket = io("http://localhost:5000", {
+    socket = io(SOCKET_URL, {
       transports: ["websocket"],
       reconnection: true,
       reconnectionDelay: 1000,
@@ -17,15 +16,15 @@ export const initSocket = (userId) => {
     });
 
     socket.on("connect", () => {
+      console.log("🟢 Socket connected:", socket.id);
 
-      // 🔐 Authenticate socket with backend
       if (userId) {
         socket.emit("authenticate", userId);
       }
     });
 
     socket.on("authenticated", (data) => {
-      // console.log("🔐 Socket authenticated:", data);
+      console.log("🔐 Socket authenticated:", data);
     });
 
     socket.on("disconnect", (reason) => {
@@ -35,32 +34,15 @@ export const initSocket = (userId) => {
     socket.on("connect_error", (error) => {
       console.error("❌ Socket connect error:", error.message);
     });
-
-    socket.on("error", (error) => {
-      console.error("❌ Socket error:", error);
-    });
   }
 
   return socket;
 };
 
-/**
- * Get existing socket instance
- * (Should be initialized already)
- */
-export const getSocket = () => {
-  if (!socket) {
-    console.warn("⚠️ Socket not initialized yet");
-  }
-  return socket;
-};
+export const getSocket = () => socket;
 
-/**
- * Disconnect socket (on logout)
- */
 export const disconnectSocket = () => {
   if (socket) {
-    console.log("🔌 Disconnecting socket");
     socket.disconnect();
     socket = null;
   }
