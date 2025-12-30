@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "@clerk/clerk-react";
-const { isLoaded, isSignedIn } = useAuth();
+
 import {
   ShoppingCart,
   Search,
@@ -22,10 +22,10 @@ import { useGetAdminAllOrdersQuery } from "@/features/api/adminApi";
 const AdminOrdersPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-
+  const { isLoaded, isSignedIn } = useAuth();
   const { data, isLoading, isError } = useGetAdminAllOrdersQuery(undefined, {
-  skip: !isLoaded || !isSignedIn,
-});
+    skip: !isLoaded || !isSignedIn,
+  });
 
   // console.log("data in adminOrderpage ", data);
 
@@ -39,7 +39,8 @@ const AdminOrdersPage = () => {
       order.crop?.name?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus =
-      statusFilter === "all" || order.orderStatus.toLowerCase() === statusFilter;
+      statusFilter === "all" ||
+      order.orderStatus.toLowerCase() === statusFilter;
 
     return matchesSearch && matchesStatus;
   });
@@ -47,27 +48,32 @@ const AdminOrdersPage = () => {
   const getStatusConfig = (status) => {
     const configs = {
       PENDING: {
-        color: "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800",
+        color:
+          "bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800",
         icon: Clock,
         label: "Pending",
       },
       CONFIRMED: {
-        color: "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800",
+        color:
+          "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800",
         icon: CheckCircle,
         label: "Confirmed",
       },
       SHIPPED: {
-        color: "bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/30 dark:text-purple-400 dark:border-purple-800",
+        color:
+          "bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/30 dark:text-purple-400 dark:border-purple-800",
         icon: Truck,
         label: "Shipped",
       },
       DELIVERED: {
-        color: "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800",
+        color:
+          "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800",
         icon: CheckCircle,
         label: "Delivered",
       },
       CREATED: {
-        color: "bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800",
+        color:
+          "bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800",
         icon: XCircle,
         label: "Created",
       },
@@ -107,7 +113,9 @@ const AdminOrdersPage = () => {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-400 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading orders...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">
+            Loading orders...
+          </p>
         </div>
       </div>
     );
@@ -117,7 +125,9 @@ const AdminOrdersPage = () => {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 max-w-md">
-          <h3 className="text-red-800 dark:text-red-400 font-semibold mb-2">Error</h3>
+          <h3 className="text-red-800 dark:text-red-400 font-semibold mb-2">
+            Error
+          </h3>
           <p className="text-red-600 dark:text-red-400">{error}</p>
           <button
             onClick={fetchOrders}
@@ -150,7 +160,9 @@ const AdminOrdersPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-900/50 p-4">
             <div className="flex items-center justify-between mb-2">
-              <div className="text-sm text-gray-600 dark:text-gray-400">Total Orders</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Total Orders
+              </div>
               <Package className="w-5 h-5 text-blue-500 dark:text-blue-400" />
             </div>
             <div className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -159,7 +171,9 @@ const AdminOrdersPage = () => {
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-900/50 p-4">
             <div className="flex items-center justify-between mb-2">
-              <div className="text-sm text-gray-600 dark:text-gray-400">Total Revenue</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Total Revenue
+              </div>
               <IndianRupee className="w-5 h-5 text-green-500 dark:text-green-400" />
             </div>
             <div className="text-2xl font-bold text-green-600 dark:text-green-400">
@@ -168,7 +182,9 @@ const AdminOrdersPage = () => {
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-900/50 p-4">
             <div className="flex items-center justify-between mb-2">
-              <div className="text-sm text-gray-600 dark:text-gray-400">Pending</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Pending
+              </div>
               <Clock className="w-5 h-5 text-yellow-500 dark:text-yellow-400" />
             </div>
             <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">
@@ -177,7 +193,9 @@ const AdminOrdersPage = () => {
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-900/50 p-4">
             <div className="flex items-center justify-between mb-2">
-              <div className="text-sm text-gray-600 dark:text-gray-400">Completed</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Completed
+              </div>
               <CheckCircle className="w-5 h-5 text-green-500 dark:text-green-400" />
             </div>
             <div className="text-2xl font-bold text-green-600 dark:text-green-400">
@@ -391,7 +409,9 @@ const AdminOrdersPage = () => {
                         <div className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
                           Order Notes
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{order.notes}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          {order.notes}
+                        </p>
                       </div>
                     )}
                   </div>

@@ -1,46 +1,50 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { 
-  ShoppingCart, 
-  Trash2, 
-  ArrowRight, 
-  Package, 
+import {
+  ShoppingCart,
+  Trash2,
+  ArrowRight,
+  Package,
   ShoppingBag,
   IndianRupee,
   X,
-  ArrowLeft
+  ArrowLeft,
 } from "lucide-react";
-import { useGetCartQuery, useRemoveFromCartMutation } from "@/features/api/cartApi";
+import {
+  useGetCartQuery,
+  useRemoveFromCartMutation,
+} from "@/features/api/cartApi";
 import { useAuth } from "@clerk/clerk-react";
-const { isLoaded, isSignedIn } = useAuth();
-const Cart = () => {
 
-  const navigate= useNavigate();
+const Cart = () => {
+  const navigate = useNavigate();
 
   // cart mutation data is here
-  const {data,isError,isLoading}=useGetCartQuery(undefined, {
-  skip: !isLoaded || !isSignedIn,
-});
-  const [removeFromCart]=useRemoveFromCartMutation();
-  const cartItems=data?.items || [];
-  console.log("data in cart page : ",data);
-  
+  const { isLoaded, isSignedIn } = useAuth();
+  const { data, isError, isLoading } = useGetCartQuery(undefined, {
+    skip: !isLoaded || !isSignedIn,
+  });
+  const [removeFromCart] = useRemoveFromCartMutation();
+  const cartItems = data?.items || [];
+  console.log("data in cart page : ", data);
 
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.available), 0);
+  const subtotal = cartItems.reduce(
+    (sum, item) => sum + item.price * item.available,
+    0
+  );
   const deliveryCharge = cartItems.length > 0 ? 50 : 0;
   const total = subtotal + deliveryCharge;
 
-
-  const removeCartItemHandler = async(item)=>{
+  const removeCartItemHandler = async (item) => {
     try {
-      const cropId=item.cropId;
-      const res=await removeFromCart({cropId}).unwrap();
-      const message=res.message;
+      const cropId = item.cropId;
+      const res = await removeFromCart({ cropId }).unwrap();
+      const message = res.message;
       alert(`${message}`);
     } catch (error) {
-      console.log("Error in remove item from cart : ",error);
+      console.log("Error in remove item from cart : ", error);
     }
-  }
+  };
 
   if (isLoading) {
     return (
@@ -94,10 +98,11 @@ const Cart = () => {
             Your Cart is Empty
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            Looks like you haven't added any crops yet. Start shopping to fill your cart!
+            Looks like you haven't added any crops yet. Start shopping to fill
+            your cart!
           </p>
           <button
-            onClick={() => navigate('/marketplace')}
+            onClick={() => navigate("/marketplace")}
             className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-lg font-bold transition-all duration-200 shadow-md flex items-center justify-center gap-2 mx-auto"
           >
             <ShoppingBag className="w-5 h-5" />
@@ -120,14 +125,15 @@ const Cart = () => {
             </h1>
           </div>
           <p className="text-gray-600 dark:text-gray-400">
-            {cartItems.length} {cartItems.length === 1 ? 'item' : 'items'} in your cart
+            {cartItems.length} {cartItems.length === 1 ? "item" : "items"} in
+            your cart
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
-            {cartItems.map((item,index) => (
+            {cartItems.map((item, index) => (
               <div
                 key={item._id}
                 onClick={() => navigate(`/marketplace/${item.cropId}`)}
@@ -157,7 +163,9 @@ const Cart = () => {
                       <span className="text-xl font-bold">
                         {item.price.toFixed(2)}
                       </span>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">per kg</span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                        per kg
+                      </span>
                     </div>
                   </div>
 
@@ -198,7 +206,9 @@ const Cart = () => {
                 </div>
                 <div className="flex justify-between text-gray-600 dark:text-gray-400">
                   <span>Delivery Charge</span>
-                  <span className="font-semibold">₹{deliveryCharge.toFixed(2)}</span>
+                  <span className="font-semibold">
+                    ₹{deliveryCharge.toFixed(2)}
+                  </span>
                 </div>
                 <div className="border-t-2 border-gray-200 dark:border-gray-700 pt-3">
                   <div className="flex justify-between text-gray-800 dark:text-gray-100 text-xl font-bold">
@@ -210,9 +220,8 @@ const Cart = () => {
                 </div>
               </div>
 
-
               <button
-                onClick={() => navigate('/marketplace')}
+                onClick={() => navigate("/marketplace")}
                 className="w-full mt-3 px-6 py-2.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-lg font-medium transition-colors"
               >
                 Continue Shopping

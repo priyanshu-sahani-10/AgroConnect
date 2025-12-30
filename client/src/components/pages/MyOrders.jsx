@@ -15,17 +15,18 @@ import {
 } from "lucide-react";
 import { useGetMyOrdersQuery } from "@/features/api/orderApi";
 import { useAuth } from "@clerk/clerk-react";
-const { isLoaded, isSignedIn } = useAuth();
+
 const MyOrders = () => {
+  const { isLoaded, isSignedIn } = useAuth();
   const { data, isLoading, isError } = useGetMyOrdersQuery(undefined, {
-  skip: !isLoaded || !isSignedIn,
-});
+    skip: !isLoaded || !isSignedIn,
+  });
   const [selectedStatus, setSelectedStatus] = useState("ALL");
 
   const orders = data?.orders || [];
   const totalOrders = data?.totalOrders || 0;
-  const role=data?.role==="farmer"?"Buyer":"Farmer";
-  const userRole=role.toLowerCase();
+  const role = data?.role === "farmer" ? "Buyer" : "Farmer";
+  const userRole = role.toLowerCase();
 
   // Filter orders by status
   const filteredOrders =
@@ -272,7 +273,9 @@ const MyOrders = () => {
                             {order[userRole] && (
                               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                                 <User className="w-4 h-4 text-green-500" />
-                                <span>{role}: {order[userRole].name}</span>
+                                <span>
+                                  {role}: {order[userRole].name}
+                                </span>
                               </div>
                             )}
                             {order[userRole]?.mobileNo && (
