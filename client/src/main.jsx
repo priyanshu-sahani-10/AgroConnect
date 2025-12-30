@@ -10,7 +10,6 @@ import ClerkSync from "./components/pages/ClerkSync";
 import { ThemeProvider } from "./components/pages/ThemeProvider";
 import SocketProvider from "./components/pages/SocketProvider";
 
-// Import your Publishable Key
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!PUBLISHABLE_KEY) {
@@ -19,17 +18,17 @@ if (!PUBLISHABLE_KEY) {
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <BrowserRouter>
-      <Provider store={appStore}>
-        <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+    <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+      <BrowserRouter>
+        <Provider store={appStore}>
           <ClerkSync />
           <ThemeProvider>
             <SocketProvider>
               <App />
             </SocketProvider>
           </ThemeProvider>
-        </ClerkProvider>
-      </Provider>
-    </BrowserRouter>
+        </Provider>
+      </BrowserRouter>
+    </ClerkProvider>
   </StrictMode>
 );
