@@ -315,7 +315,7 @@ export default function Navbar() {
 
                     {user.role === "buyer" && (
                       <Link
-                        to="/orders"
+                        to="/my-orders"
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         <button className="w-full px-4 py-3 bg-green-600 dark:bg-green-700 text-white rounded-lg hover:bg-green-700 dark:hover:bg-green-800 transition-colors shadow-md dark:shadow-green-900/50 flex items-center gap-3 justify-center text-sm sm:text-base font-medium">

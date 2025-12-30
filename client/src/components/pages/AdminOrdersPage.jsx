@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "@clerk/clerk-react";
+const { isLoaded, isSignedIn } = useAuth();
 import {
   ShoppingCart,
   Search,
@@ -21,7 +23,9 @@ const AdminOrdersPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
-  const { data, isLoading, isError } = useGetAdminAllOrdersQuery();
+  const { data, isLoading, isError } = useGetAdminAllOrdersQuery(undefined, {
+  skip: !isLoaded || !isSignedIn,
+});
 
   // console.log("data in adminOrderpage ", data);
 

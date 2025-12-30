@@ -14,9 +14,12 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import { useGetMyOrdersQuery } from "@/features/api/orderApi";
-
+import { useAuth } from "@clerk/clerk-react";
+const { isLoaded, isSignedIn } = useAuth();
 const MyOrders = () => {
-  const { data, isLoading, isError } = useGetMyOrdersQuery();
+  const { data, isLoading, isError } = useGetMyOrdersQuery(undefined, {
+  skip: !isLoaded || !isSignedIn,
+});
   const [selectedStatus, setSelectedStatus] = useState("ALL");
 
   const orders = data?.orders || [];

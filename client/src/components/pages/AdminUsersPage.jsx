@@ -7,12 +7,16 @@ import {
   useBlockUnblockUserMutation,
   useGetAdminAllUsersQuery
 } from '@/features/api/adminApi';
+import { useAuth } from "@clerk/clerk-react";
+const { isLoaded, isSignedIn } = useAuth();
 
 const AdminUsersPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
 
-  const { data, isError, isLoading, error } = useGetAdminAllUsersQuery();
+  const { data, isError, isLoading, error } = useGetAdminAllUsersQuery(undefined, {
+  skip: !isLoaded || !isSignedIn,
+});
   const [blockUnblockUser] = useBlockUnblockUserMutation();
 
   const users = data?.users || [];

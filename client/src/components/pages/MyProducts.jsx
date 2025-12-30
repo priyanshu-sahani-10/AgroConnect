@@ -17,11 +17,15 @@ import {
 } from "@/features/api/cropApi";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useAuth } from "@clerk/clerk-react";
+const { isLoaded, isSignedIn } = useAuth();
 
 const ITEMS_PER_PAGE = 9;
 
 const MyProducts = () => {
-  const { data, isLoading, isSuccess, isError } = useGetAllUserCropQuery();
+  const { data, isLoading, isSuccess, isError } = useGetAllUserCropQuery(undefined, {
+  skip: !isLoaded || !isSignedIn,
+});
   const [deleteUserCrop, {isLoading:isDeleting}] = useDeleteUserCropMutation();
   const [selectedCrop, setSelectedCrop] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);

@@ -6,16 +6,21 @@ import {
   ArrowRight, 
   Package, 
   ShoppingBag,
-  IndianRupee
+  IndianRupee,
+  X,
+  ArrowLeft
 } from "lucide-react";
 import { useGetCartQuery, useRemoveFromCartMutation } from "@/features/api/cartApi";
-
+import { useAuth } from "@clerk/clerk-react";
+const { isLoaded, isSignedIn } = useAuth();
 const Cart = () => {
 
   const navigate= useNavigate();
 
   // cart mutation data is here
-  const {data,isError,isLoading}=useGetCartQuery();
+  const {data,isError,isLoading}=useGetCartQuery(undefined, {
+  skip: !isLoaded || !isSignedIn,
+});
   const [removeFromCart]=useRemoveFromCartMutation();
   const cartItems=data?.items || [];
   console.log("data in cart page : ",data);
