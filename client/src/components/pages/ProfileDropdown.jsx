@@ -167,6 +167,43 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
                   href="/my-products"
                 />
               )}
+              {user.role === "admin" && (
+                <MenuItem
+                  icon={Users}
+                  label="All Users"
+                  href="/getAllUsers"
+                />
+              )}
+              {user.role === "admin" && (
+                <MenuItem
+                  icon={ClipboardList}
+                  label="All Orders"
+                  href="/getAllOrders"
+                />
+              )}
+             {/* {user.role === "admin" && (
+                  <>
+                    <a href="/">
+                      <button 
+                        onClick={() => setDropdownOpen(false)}
+                        className="w-full text-left px-4 py-3 hover:bg-purple-50 dark:hover:bg-purple-950/30 flex items-center gap-3 text-sm transition-colors text-gray-900 dark:text-gray-100"
+                      >
+                        <Users className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                        <span className="font-medium"></span>
+                      </button>
+                    </a>
+
+                    <a href="/">
+                      <button 
+                        onClick={() => setDropdownOpen(false)}
+                        className="w-full text-left px-4 py-3 hover:bg-purple-50 dark:hover:bg-purple-950/30 flex items-center gap-3 text-sm transition-colors text-gray-900 dark:text-gray-100"
+                      >
+                        <ClipboardList className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                        <span className="font-medium">A</span>
+                      </button>
+                    </a>
+                  </>
+                )} */}
 
               {/* Logout */}
               <div className="border-t border-gray-200 dark:border-gray-700 py-2">
