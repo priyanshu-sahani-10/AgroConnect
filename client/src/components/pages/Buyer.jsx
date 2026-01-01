@@ -13,6 +13,8 @@ import {
   Truck,
   Search,
 } from "lucide-react";
+import { Link } from "react-router-dom";
+import Home from "./Home";
 
 const BuyerOnboardingPage = () => {
   const features = [
@@ -144,13 +146,13 @@ const BuyerOnboardingPage = () => {
               delivered to your doorstep. No middlemen, no compromise on quality.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white px-8 py-4 rounded-lg font-semibold text-lg flex items-center justify-center gap-2 shadow-lg transition-all">
+              <Link to ="/" className="bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white px-8 py-4 rounded-lg font-semibold text-lg flex items-center justify-center gap-2 shadow-lg transition-all">
                 Start Shopping Now
                 <ArrowRight className="w-5 h-5" />
-              </button>
-              <button className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-green-600 dark:text-green-400 px-8 py-4 rounded-lg font-semibold text-lg border-2 border-green-600 dark:border-green-500 transition-all">
-                Browse Products
-              </button>
+              </Link>
+              <Link to ="/"className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-green-600 dark:text-green-400 px-8 py-4 rounded-lg font-semibold text-lg border-2 border-green-600 dark:border-green-500 transition-all">
+                Home 
+              </Link>
             </div>
           </div>
         </div>
@@ -380,10 +382,10 @@ const BuyerOnboardingPage = () => {
           <p className="text-xl text-green-100 dark:text-green-200 mb-8">
             Join thousands of buyers getting farm-fresh produce at the best prices
           </p>
-          <button className="bg-white hover:bg-gray-100 text-green-600 px-8 py-4 rounded-lg font-semibold text-lg flex items-center justify-center gap-2 shadow-lg mx-auto transition-all">
+          < Link to="/sign-up" className="bg-white hover:bg-gray-100 text-green-600 px-8 py-4 rounded-lg font-semibold text-lg flex items-center justify-center gap-2 shadow-lg mx-auto transition-all">
             Create Your Free Account
             <ArrowRight className="w-5 h-5" />
-          </button>
+          </Link>
           <p className="text-green-100 dark:text-green-200 mt-4 text-sm">
             No subscription fees • Shop anytime • Cancel anytime
           </p>

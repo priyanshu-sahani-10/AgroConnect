@@ -11,7 +11,7 @@ const ChatList = ({
 }) => {
   const [localConversations, setLocalConversations] = useState([]);
 
-  // 🔹 Keep local copy in sync with props
+  // 🔹 Sync props → local state
   useEffect(() => {
     setLocalConversations(conversations);
   }, [conversations]);
@@ -20,8 +20,6 @@ const ChatList = ({
   useEffect(() => {
     const socket = getSocket();
     if (!socket) return;
-
-    // console.log("🔌 ChatList attaching socket listeners");
 
     const onMessagesRead = ({ conversationId }) => {
       setLocalConversations((prev) =>
@@ -65,24 +63,28 @@ const ChatList = ({
 
   if (loading) {
     return (
-      <div className="flex-1 flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center bg-white dark:bg-gray-900">
         <div className="text-center">
           <div className="w-10 h-10 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-sm text-gray-500">Loading chats...</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Loading chats...
+          </p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div className="flex-1 overflow-y-auto bg-white dark:bg-gray-900">
       {localConversations.length === 0 ? (
         <div className="p-8 text-center">
-          <MessageCircle className="w-10 h-10 mx-auto text-gray-400 mb-3" />
-          <p className="text-gray-500">No conversations yet</p>
+          <MessageCircle className="w-10 h-10 mx-auto text-gray-400 dark:text-gray-500 mb-3" />
+          <p className="text-gray-500 dark:text-gray-400">
+            No conversations yet
+          </p>
         </div>
       ) : (
-        <div className="divide-y">
+        <div className="divide-y divide-gray-200 dark:divide-gray-700">
           {localConversations.map((conv) => {
             const isActive = conv._id === activeConversationId;
 
@@ -92,15 +94,13 @@ const ChatList = ({
                 onClick={() => {
                   const socket = getSocket();
 
-                  // 1️⃣ Open chat
                   onSelectConversation(conv);
 
-                  // 2️⃣ Emit read event
                   socket?.emit("mark_as_read", {
                     conversationId: conv._id,
                   });
 
-                  // 3️⃣ Optimistic UI update
+                  // Optimistic UI update
                   setLocalConversations((prev) =>
                     prev.map((c) =>
                       c._id === conv._id
@@ -111,26 +111,26 @@ const ChatList = ({
                 }}
                 className={`p-4 cursor-pointer transition ${
                   isActive
-                    ? "bg-green-50 dark:bg-green-900/20"
-                    : "hover:bg-gray-50 dark:hover:bg-gray-800"
+                    ? "bg-green-100 dark:bg-green-900/30"
+                    : "hover:bg-gray-100 dark:hover:bg-gray-800"
                 }`}
               >
                 <div className="flex gap-3">
                   {/* Avatar */}
                   <div className="relative">
-                    <div className="w-11 h-11 rounded-full bg-green-600 text-white flex items-center justify-center font-bold">
+                    <div className="w-11 h-11 rounded-full bg-green-500 dark:bg-green-700 text-white flex items-center justify-center font-bold">
                       {conv.otherUser?.name?.[0]?.toUpperCase() || "?"}
                     </div>
-                    <Circle className="absolute bottom-0 right-0 w-3 h-3 fill-green-500 text-green-500 bg-white rounded-full" />
+                    <Circle className="absolute bottom-0 right-0 w-3 h-3 fill-green-500 text-green-500 bg-gray-100 dark:bg-gray-900 rounded-full" />
                   </div>
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex justify-between">
-                      <h3 className="font-semibold truncate">
+                    <div className="flex justify-between items-center">
+                      <h3 className="font-semibold truncate text-gray-900 dark:text-gray-100">
                         {conv.otherUser?.name || "Unknown"}
                       </h3>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
                         {formatTime(conv.lastMessageAt)}
                       </span>
                     </div>
@@ -139,8 +139,8 @@ const ChatList = ({
                       <p
                         className={`text-sm truncate ${
                           conv.unreadCount > 0
-                            ? "font-semibold text-black"
-                            : "text-gray-500"
+                            ? "font-semibold text-gray-900 dark:text-gray-100"
+                            : "text-gray-500 dark:text-gray-400"
                         }`}
                       >
                         {conv.lastMessage || "Tap to open chat"}

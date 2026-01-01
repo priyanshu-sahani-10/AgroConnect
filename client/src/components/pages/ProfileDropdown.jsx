@@ -1,16 +1,17 @@
 import { useState } from "react";
-import { 
-  ChevronDown, 
-  User, 
-  LogOut, 
-  Edit, 
-  ShoppingCart, 
-  Package, 
+import { createPortal } from "react-dom";
+import {
+  ChevronDown,
+  User,
+  LogOut,
+  Edit,
+  ShoppingCart,
+  Package,
   Mail,
   DollarSign,
   ShoppingBag,
   Users,
-  ClipboardList
+  ClipboardList,
 } from "lucide-react";
 import { useClerk } from "@clerk/clerk-react";
 import { useSelector } from "react-redux";
@@ -21,202 +22,151 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const logoutHandler = async () => {
-    try {
-      await signOut();
-      setDropdownOpen(false);
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
+    await signOut();
+    setDropdownOpen(false);
   };
 
   return (
-    <div className={`flex items-center gap-3 ${wrapperClassName}`}>
-      <div className="relative">
-        <button 
-          onClick={() => setDropdownOpen(!dropdownOpen)}
-          className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-        >
-          <div className="w-10 h-10 rounded-full border-2 border-green-500 dark:border-green-400 bg-gradient-to-br from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white flex items-center justify-center font-bold shadow-md dark:shadow-green-900/50">
-            {user?.imageUrl ? (
-              <img src={user.imageUrl} alt={user.name} className="w-full h-full rounded-full object-cover" />
-            ) : (
-              user?.name?.charAt(0).toUpperCase()
-            )}
-          </div>
-          <ChevronDown className="w-4 h-4 text-gray-600 dark:text-gray-400 hidden md:block" />
-        </button>
+    <div className={`flex items-center ${wrapperClassName}`}>
+      {/* Avatar Button */}
+      <button
+        onClick={() => setDropdownOpen(true)}
+        className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+      >
+        <div className="w-10 h-10 rounded-full border-2 border-green-500 dark:border-green-400 bg-gradient-to-br from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white flex items-center justify-center font-bold">
+          {user?.imageUrl ? (
+            <img
+              src={user.imageUrl}
+              alt={user.name}
+              className="w-full h-full rounded-full object-cover"
+            />
+          ) : (
+            user?.name?.charAt(0).toUpperCase()
+          )}
+        </div>
+        <ChevronDown className="w-4 h-4 text-gray-600 dark:text-gray-400 hidden md:block" />
+      </button>
 
-        {dropdownOpen && (
+      {/* PORTAL DROPDOWN */}
+      {dropdownOpen &&
+        createPortal(
           <>
-            <div 
-              className="fixed inset-0 z-10" 
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 z-[9998]"
               onClick={() => setDropdownOpen(false)}
             />
-            <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl dark:shadow-gray-950/70 border border-gray-200 dark:border-gray-700 z-20 overflow-hidden">
-              {/* User Info Header */}
+
+            {/* Dropdown */}
+            <div
+              className="
+                fixed z-[9999]
+                top-16 right-4
+                md:top-20 md:right-8
+                w-[90vw] max-w-sm md:w-80
+                bg-white dark:bg-gray-800
+                rounded-lg shadow-xl
+                border border-gray-200 dark:border-gray-700
+                overflow-hidden
+              "
+            >
+              {/* Header */}
               <div className="p-4 bg-gradient-to-r from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700 text-white">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="w-12 h-12 rounded-full border-2 border-white bg-white/20 flex items-center justify-center font-bold text-lg">
                     {user?.imageUrl ? (
-                      <img src={user.imageUrl} alt={user.name} className="w-full h-full rounded-full object-cover" />
+                      <img
+                        src={user.imageUrl}
+                        alt={user.name}
+                        className="w-full h-full rounded-full object-cover"
+                      />
                     ) : (
                       user?.name?.charAt(0).toUpperCase()
                     )}
                   </div>
                   <div>
                     <p className="font-semibold text-lg">{user?.name}</p>
-                    <p className="text-xs text-green-50 capitalize">{user?.role}</p>
+                    <p className="text-xs capitalize text-green-100">
+                      {user?.role}
+                    </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-1 text-sm text-green-50">
+
+                <div className="flex items-center gap-1 text-sm text-green-100">
                   <Mail className="w-3 h-3" />
                   <span className="truncate">{user?.email}</span>
                 </div>
               </div>
 
-              {/* Stats Section */}
+              {/* Stats */}
               <div className="p-4 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
                 <div className="grid grid-cols-2 gap-3">
-                  {user.role === "buyer" ? (
+                  {user.role === "buyer" && (
                     <>
-                      <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
-                        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-1">
-                          <ShoppingCart className="w-4 h-4" />
-                          <span className="text-xs font-medium">Total Orders</span>
-                        </div>
-                        <p className="text-xl font-bold text-green-600 dark:text-green-400">{user.totalOrder}</p>
-                      </div>
-                      <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
-                        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-1">
-                          <DollarSign className="w-4 h-4" />
-                          <span className="text-xs font-medium">Total Spent</span>
-                        </div>
-                        <p className="text-xl font-bold text-green-600 dark:text-green-400">₹{user.totalSpent.toLocaleString()}</p>
-                      </div>
+                      <Stat
+                        icon={ShoppingCart}
+                        label="Orders"
+                        value={user.totalOrder}
+                      />
+                      <Stat
+                        icon={DollarSign}
+                        label="Spent"
+                        value={`₹${user.totalSpent}`}
+                      />
                     </>
-                  ) : user.role === "farmer" ? (
+                  )}
+
+                  {user.role === "farmer" && (
                     <>
-                      <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
-                        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-1">
-                          <Package className="w-4 h-4" />
-                          <span className="text-xs font-medium">Total Sales</span>
-                        </div>
-                        <p className="text-xl font-bold text-green-600 dark:text-green-400">{user.totalOrder}</p>
-                      </div>
-                      <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
-                        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-1">
-                          <DollarSign className="w-4 h-4" />
-                          <span className="text-xs font-medium">Total Earned</span>
-                        </div>
-                        <p className="text-xl font-bold text-green-600 dark:text-green-400">₹{user.totalEarning.toLocaleString()}</p>
-                      </div>
+                      <Stat
+                        icon={Package}
+                        label="Sales"
+                        value={user.totalOrder}
+                      />
+                      <Stat
+                        icon={DollarSign}
+                        label="Earned"
+                        value={`₹${user.totalEarning}`}
+                      />
                     </>
-                  ) : (
-                    // Admin stats
+                  )}
+
+                  {user.role === "admin" && (
                     <>
-                      <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
-                        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-1">
-                          <Users className="w-4 h-4" />
-                          <span className="text-xs font-medium">Platform</span>
-                        </div>
-                        <p className="text-sm font-bold text-purple-600 dark:text-purple-400">Admin Panel</p>
-                      </div>
-                      <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
-                        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-1">
-                          <ClipboardList className="w-4 h-4" />
-                          <span className="text-xs font-medium">Management</span>
-                        </div>
-                        <p className="text-sm font-bold text-purple-600 dark:text-purple-400">Full Access</p>
-                      </div>
+                      <Stat icon={Users} label="Role" value="Admin" />
+                      <Stat icon={ClipboardList} label="Access" value="Full" />
                     </>
                   )}
                 </div>
               </div>
 
-              {/* Menu Items */}
-              <div className="py-2">
-                <a href="/profile">
-                  <button 
-                    onClick={() => setDropdownOpen(false)}
-                    className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-3 text-sm transition-colors text-gray-900 dark:text-gray-100"
-                  >
-                    <User className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                    <span className="font-medium">My Profile</span>
-                  </button>
-                </a>
+              {/* Menu */}
+              <MenuItem icon={User} label="My Profile" href="/profile" />
+              <MenuItem icon={Edit} label="Edit Account" href="/edit-profile" />
 
-                <a href="/edit-profile">
-                  <button 
-                    onClick={() => setDropdownOpen(false)}
-                    className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-3 text-sm transition-colors text-gray-900 dark:text-gray-100"
-                  >
-                    <Edit className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                    <span className="font-medium">Edit Account</span>
-                  </button>
-                </a>
+              {(user.role === "buyer" || user.role === "farmer") && (
+                <MenuItem
+                  icon={ShoppingBag}
+                  label="My Orders"
+                  href="/my-orders"
+                />
+              )}
 
-                {/* Admin-specific menu items */}
-                {user.role === "admin" && (
-                  <>
-                    <a href="/getAllUsers">
-                      <button 
-                        onClick={() => setDropdownOpen(false)}
-                        className="w-full text-left px-4 py-3 hover:bg-purple-50 dark:hover:bg-purple-950/30 flex items-center gap-3 text-sm transition-colors text-gray-900 dark:text-gray-100"
-                      >
-                        <Users className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                        <span className="font-medium">All Users</span>
-                      </button>
-                    </a>
+              {user.role === "buyer" && (
+                <MenuItem
+                  icon={ShoppingCart}
+                  label="My Cart"
+                  href="/cart-items"
+                />
+              )}
 
-                    <a href="/getAllOrders">
-                      <button 
-                        onClick={() => setDropdownOpen(false)}
-                        className="w-full text-left px-4 py-3 hover:bg-purple-50 dark:hover:bg-purple-950/30 flex items-center gap-3 text-sm transition-colors text-gray-900 dark:text-gray-100"
-                      >
-                        <ClipboardList className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                        <span className="font-medium">All Orders</span>
-                      </button>
-                    </a>
-                  </>
-                )}
-
-                {/* Buyer and Farmer menu items */}
-                {(user.role === "buyer" || user.role === "farmer") && (
-                  <a href="/my-orders">
-                    <button 
-                      onClick={() => setDropdownOpen(false)}
-                      className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-3 text-sm transition-colors text-gray-900 dark:text-gray-100"
-                    >
-                      <ShoppingBag className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                      <span className="font-medium">My Orders</span>
-                    </button>
-                  </a>
-                )}
-
-                {user.role === "buyer" && (
-                  <a href="/cart-items">
-                    <button 
-                      onClick={() => setDropdownOpen(false)}
-                      className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-3 text-sm transition-colors text-gray-900 dark:text-gray-100"
-                    >
-                      <ShoppingCart className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                      <span className="font-medium">My Cart</span>
-                    </button>
-                  </a>
-                )}
-
-                {user.role === "farmer" && (
-                  <a href="/my-products">
-                    <button 
-                      onClick={() => setDropdownOpen(false)}
-                      className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-3 text-sm transition-colors text-gray-900 dark:text-gray-100"
-                    >
-                      <Package className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                      <span className="font-medium">My Products</span>
-                    </button>
-                  </a>
-                )}
-              </div>
+              {user.role === "farmer" && (
+                <MenuItem
+                  icon={Package}
+                  label="My Products"
+                  href="/my-products"
+                />
+              )}
 
               {/* Logout */}
               <div className="border-t border-gray-200 dark:border-gray-700 py-2">
@@ -229,11 +179,34 @@ const UserProfileDropdown = ({ wrapperClassName = "" }) => {
                 </button>
               </div>
             </div>
-          </>
+          </>,
+          document.body
         )}
-      </div>
     </div>
   );
 };
 
 export default UserProfileDropdown;
+
+/* ---------- Helper Components ---------- */
+
+const Stat = ({ icon: Icon, label, value }) => (
+  <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+    <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-1 text-xs">
+      <Icon className="w-4 h-4" />
+      {label}
+    </div>
+    <p className="text-lg font-bold text-green-600 dark:text-green-400">
+      {value}
+    </p>
+  </div>
+);
+
+const MenuItem = ({ icon: Icon, label, href }) => (
+  <a href={href}>
+    <button className="w-full px-4 py-3 flex items-center gap-3 text-sm text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+      <Icon className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+      {label}
+    </button>
+  </a>
+);

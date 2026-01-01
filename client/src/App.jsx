@@ -21,6 +21,7 @@ import AdminUsersPage from './components/pages/AdminUsersPage';
 import AdminOrdersPage from './components/pages/AdminOrdersPage';
 import FarmerOnboardingPage from './components/pages/Farmer';
 import BuyerOnboardingPage from './components/pages/Buyer';
+import ChatModal from './components/chat/chatModel';
 export default function App() {
   return (
     <>
@@ -41,6 +42,7 @@ export default function App() {
         <Route path="updateCrop/:cropId" element={<UpdateUserCrop/>}/>
         <Route path="my-orders" element={<MyOrders/>}/>
         <Route path="cart-items" element={<Cart/>}/>
+        <Route path="chat" element={<ChatModal/>}/>
         <Route path="landing-page" element={<LandingPage/>}/>
         <Route path="getAllUsers" element={<AdminUsersPage/>}/>
         <Route path="getAllOrders" element={<AdminOrdersPage/>}/>
